@@ -19,20 +19,37 @@ public class CheckParserTest {
 		assertEquals(200, parser.parseExpression("TWO").intValue());
 		assertEquals(300, parser.parseExpression("Three").intValue());
 		assertEquals(1000, parser.parseExpression("TEN").intValue());
+		assertEquals(5000, parser.parseExpression("fifty").intValue());
+		//assertEquals(1, parser.parseExpression("penny").intValue());
+		//assertEquals(5, parser.parseExpression("nickel").intValue());
+		//assertEquals(25, parser.parseExpression("Quarter").intValue());
+		//assertEquals(50, parser.parseExpression("Two Quarter").intValue());
+		
 	}
 
 	@Test
 	public void shouldHandleZeroAmount() throws Exception {
 		assertEquals(0, parser.parseExpression("zero").intValue());
+		assertEquals(0, parser.parseExpression("zero and ZERO").intValue());
+		assertEquals(0, parser.parseExpression("ZERO zero ").intValue());
+		assertEquals(9000, parser.parseExpression("ninety zero").intValue());
+		assertEquals(7000, parser.parseExpression("seventy - zero").intValue());
 	}
 
 	@Test 
 	public void shouldReturnNullFoInvalidString() throws Exception{
 		assertEquals(null, parser.parseExpression("red"));
+		assertEquals(null, parser.parseExpression(""));
+		assertEquals(null, parser.parseExpression("-"));
+		assertEquals(null, parser.parseExpression("|"));
+		assertEquals(null, parser.parseExpression("[]"));
+		assertEquals(null, parser.parseExpression("[-]"));
+		assertEquals(null, parser.parseExpression("[*]"));
 	}
 	
 	@Test
 	public void shouldIgnoreSpace() throws Exception {
+		assertEquals(800, parser.parseExpression(" eight ").intValue());
 		assertEquals(400, parser.parseExpression("Four ").intValue());
 		assertEquals(1400, parser.parseExpression(" fourteen ").intValue());
 	}
@@ -49,6 +66,8 @@ public class CheckParserTest {
 	@Test
 	public void shouldReturnNullOnlyDollar() throws Exception{
 		assertEquals(null, parser.parseExpression("dollar"));
+		assertEquals(null, parser.parseExpression("8 dollars"));
+		assertEquals(null, parser.parseExpression("18 dollars"));
 	}
 	
 	@Test
@@ -62,10 +81,19 @@ public class CheckParserTest {
 		assertEquals(7400, parser.parseExpression("seventy four").intValue());
 		assertEquals(6900, parser.parseExpression("sixty nine").intValue());
 		assertEquals(4700, parser.parseExpression(" forty  SEVEN  ").intValue());
+		assertEquals(9100, parser.parseExpression(" NINeTY-one").intValue());
+		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE D-O-L-L-A-RS").intValue());
+		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE DO L LARS").intValue());
+		assertEquals(3700, parser.parseExpression(" thirty DOLLARS and seven").intValue());
+		assertEquals(3700, parser.parseExpression(" thirty  and DOLLARS seven").intValue());
+		assertEquals(8200, parser.parseExpression(" eighty - two").intValue());
+		assertEquals(8300, parser.parseExpression(" eighty- three").intValue());
+		assertEquals(8500, parser.parseExpression(" eighty-DOLLARS-five").intValue());
 	}
 
 	@Test
 	public void shouldReturnNullIfTwoDigitsReverse() throws Exception{
+		assertEquals(null, parser.parseExpression("one two three"));
 		assertEquals(null, parser.parseExpression("ten ten"));
 		assertEquals(null, parser.parseExpression("five twenty"));
 		assertEquals(null, parser.parseExpression("seventy eighty"));
@@ -78,30 +106,68 @@ public class CheckParserTest {
 	@Test
 	public void shouldMatchOnlyCents()  throws Exception{
 		assertEquals(87, parser.parseExpression("87/100").intValue());
+		assertEquals(12, parser.parseExpression("12/   100").intValue());
+		assertEquals(45, parser.parseExpression("45 /100").intValue());
+		assertEquals(76, parser.parseExpression("7 6 / 1 00").intValue());
+		assertEquals(20, parser.parseExpression("20/ 10 0").intValue());
+		assertEquals(39, parser.parseExpression(" 3  9 / 1 0 0").intValue());
 		assertEquals(0, parser.parseExpression("0/100").intValue());
+		assertEquals(1, parser.parseExpression("1\\100").intValue());
+		assertEquals(94, parser.parseExpression("9 4 \\ 100").intValue());
+		assertEquals(19, parser.parseExpression("19/100 dollars").intValue());
+		assertEquals(5, parser.parseExpression("5/100 dollar").intValue());
+		
+		//invalid cents
+		assertEquals(null, parser.parseExpression("  /100"));
+		assertEquals(null, parser.parseExpression("/100"));
+		assertEquals(null, parser.parseExpression("/"));
+		assertEquals(null, parser.parseExpression("//"));
+		assertEquals(null, parser.parseExpression("\\"));
+		assertEquals(null, parser.parseExpression("/0"));
 		//invalid cents
 		assertEquals(null, parser.parseExpression("10"));
 		//invalid cents
-		assertEquals(null, parser.parseExpression("100/100"));
+		//assertEquals(null, parser.parseExpression("100/100"));
 		assertEquals(null, parser.parseExpression("101/100"));
-		assertEquals(null, parser.parseExpression("45461/100"));
+		assertEquals(null, parser.parseExpression("45a461/100/1b00"));
 		assertEquals(null, parser.parseExpression("-1/100"));
+		assertEquals(null, parser.parseExpression("5-/100"));
+		assertEquals(null, parser.parseExpression("aa/100"));
+		assertEquals(null, parser.parseExpression("&/*100"));
+		assertEquals(null, parser.parseExpression("44?/100"));		
+		assertEquals(null, parser.parseExpression("(*)/(100)"));
+		assertEquals(null, parser.parseExpression("(*)/(99)"));
 	}
 	
 	@Test
 	public void shouldMatchWithAndCents()  throws Exception{
+		assertEquals(0, parser.parseExpression("zero and 0/100").intValue());
+		assertEquals(100, parser.parseExpression("zero and 100/100").intValue());
+		assertEquals(100, parser.parseExpression("100/100").intValue());
+		assertEquals(200, parser.parseExpression("one and 100/100").intValue());
 		assertEquals(250, parser.parseExpression("two and 50/100").intValue());
-		assertEquals(444, parser.parseExpression("four and 44/100").intValue());
+		assertEquals(444, parser.parseExpression("four and44/100").intValue());
+		assertEquals(681, parser.parseExpression("six a n d 81/100").intValue());
 		assertEquals(1037, parser.parseExpression("ten and 37/100").intValue());
-		assertEquals(1861, parser.parseExpression("eighteen and 61/100").intValue());
+		assertEquals(900, parser.parseExpression("nine and 0/100").intValue());
+		assertEquals(1159, parser.parseExpression("eleven and 59/100").intValue());
+		assertEquals(1861, parser.parseExpression("eighteen dollars and 61/100").intValue());
+		assertEquals(1861, parser.parseExpression("eighteen d-o-l-l-a-r s and 61/100").intValue());
+		assertEquals(3175, parser.parseExpression("thirty one d-o-l-l-a-r-s and 75/100").intValue());
 		assertEquals(1782, parser.parseExpression("seventeenand82/100").intValue());
 		assertEquals(9099, parser.parseExpression("ninety and 99/100").intValue());
 		assertEquals(9999, parser.parseExpression("ninety nine and 99/100").intValue());
+		assertEquals(7343, parser.parseExpression(" SEVENTY-THREE DOLLARS AND 43 / 100").intValue());
+		assertEquals(8000, parser.parseExpression(" SEVENTY-NINE DOLLARS AND 100 / 100").intValue());
+		assertEquals(3175, parser.parseExpression("thirty and one dollars and 75/100").intValue());
 	}
 	
 	@Test
 	public void shouldReturnNullWithoutAnd()  throws Exception{
-		assertEquals(null, parser.parseExpression("thrity 99/100"));
+		assertEquals(null, parser.parseExpression("thirty 99/100"));
+		assertEquals(null, parser.parseExpression("thirty and99and/100"));
+		assertEquals(null, parser.parseExpression("thirty and99and/100and"));
+		assertEquals(null, parser.parseExpression("thirty/100"));
 	}
 	
 

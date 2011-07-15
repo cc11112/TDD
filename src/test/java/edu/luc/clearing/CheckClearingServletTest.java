@@ -1,5 +1,7 @@
 package edu.luc.clearing;
 
+import java.util.logging.Logger;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertThat;
@@ -41,7 +43,6 @@ public class CheckClearingServletTest {
 	
 	@Test
 	public void setsContentTypeForTheResponse() throws Exception{
-		
 		servlet.doPost(mockRequest, mockResponse);
 		
 		verify(mockResponse).setContentType("application/json");
@@ -52,5 +53,18 @@ public class CheckClearingServletTest {
 		servlet.doPost(mockRequest, mockResponse);
 		assertThat(writer.toString(), is(equalTo("{}")));
 	}
+	
+	@Test
+	public void returnsCheckAmountInAJSONArray() throws Exception{
+		servlet.doGet(null, mockResponse);
+		
+		assertThat(writer.toString(), is(equalTo("[]")));
+	}
+	
+	@Test
+	public void getRequestReturnsAllThePreviouslyEncounteredAmount() throws Exception{
+		
+	}
+	
 
 }

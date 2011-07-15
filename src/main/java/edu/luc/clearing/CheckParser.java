@@ -6,10 +6,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CheckParser {
+
+	private static final String MatchCents = "[\\d,\\s]+/(\\s)*1(\\s)*0(\\s)*0(\\s*)";
+	private static final String Dollars = "d(\\s)*o(\\s)*l(\\s)*l(\\s)*a(\\s)*r(\\s)*[s]?(\\s)*";
+	
 	private static final Map<String, Integer> AMOUNTS = new HashMap<String, Integer>();
 
 	public CheckParser() {
 		AMOUNTS.put("zero", 0);
+		//AMOUNTS.put("penny", 1);
+		//AMOUNTS.put("nickel", 5);
+		//AMOUNTS.put("dime", 10);
+		//AMOUNTS.put("quarter", 25);
 		AMOUNTS.put("one", 100);
 		AMOUNTS.put("two", 200);
 		AMOUNTS.put("three", 300);
@@ -41,18 +49,34 @@ public class CheckParser {
 
 	public Integer parseExpression(String amount) {
 
-		amount = amount.toLowerCase().trim();
+		try {
 
-		if (IsMatch("([a-z\\s]+)(\\s*)+and(\\s?)(\\d+/100)", amount)) {
-			return parseAmountWithCents(amount);
-		} else if (IsMatch("([a-z\\s]+)(\\s*)+dollar([s]?)", amount)) {
-			return parseAmountWithDollars(amount);
-		} else if (IsMatch("([a-z\\s]+)(\\s*)([a-z]+)", amount)) {
-			return parseAmountTwoDigits(amount);
-		} else if (IsMatch("\\d+/100(\\s*)", amount)) {
-			return parseCents(amount);
+			if (amount != null) {
+
+				amount = amount.toLowerCase().trim();
+				amount = amount.replace('\\', '/'); // .replaceAll("-","")
+
+				if (IsMatch(
+						"([a-z\\s,\\-]+)([\\s]*)+((a(\\s)*n(\\s)*d)?(\\s?)[\\d,\\s]+/(\\s)*1(\\s)*0(\\s)*0(\\s*))",
+						amount)) {
+					return parseAmountWithCents(amount);
+				} else if (IsMatch("([a-z\\s,\\-]+)(\\s*)+d(\\s)*o(\\s)*l(\\s)*l(\\s)*a(\\s)*r(\\s)*([s]?)", amount)) {
+					return parseAmountWithDollars(amount);
+				} else if (IsMatch("([a-z\\s,\\-]+)(\\s*)([a-z]+)", amount)) {
+					return parseAmountTwoDigits(amount);
+				} else if (IsMatch(MatchCents, amount) || 
+						IsMatch(MatchCents + Dollars, amount)) {
+					return parseCents(amount);
+				}
+
+				return parseAmount(amount);
+			}
+
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+
 		}
-		return parseAmount(amount);
+		return getInvalidAmount();
 	}
 
 	private Integer parseAmount(String amount) {
@@ -70,22 +94,32 @@ public class CheckParser {
 			return getInvalidAmount();
 		}
 	}
+
+	private String RemoveMiddleSpace(String amount){
+		if (amount != null){
+			return amount.replaceAll("-", " ").replaceAll(Dollars, " dollar ");
+		}
+		return amount;
+	}
 	
 	private Integer parseAmountTwoDigits(String amount) {
+		
+		amount = RemoveMiddleSpace(amount);
+		
 		Pattern p = getPattern("\\s+");
 		String[] array = p.split(amount);
 
 		if (array.length > 0) {
 			Integer total = null;
-			for (String s : array) {
-				Integer i = parseAmount(s);
-				if (i != null){
-					if (total == null){
+			for (String  s : array) {
+				Integer n = parseAmount(s);
+				if (n != null) {
+					if (total == null || (total == 0 && n == 0)) {
 						total = 0;
-					} else if (total < 2000 || i > 900 ){
+					} else if (total < 2000 || n > 900) {
 						return null;
 					}
-					total += i;
+					total += n;
 				}
 			}
 			return total;
@@ -95,31 +129,63 @@ public class CheckParser {
 	}
 
 	private Integer parseAmountWithDollars(String amount) {
+		amount = RemoveMiddleSpace(amount);
 		Pattern p = getPattern("dollar");
 		String[] array = p.split(amount);
 		return parseFromArrayFirstElement(array);
 	}
 
 	private Integer parseCents(String amount) {
-		Pattern p = getPattern("/100");
+		amount = amount.replaceAll(Dollars, "").replaceAll("\\s*", "");
+		Pattern p = getPattern("/");
 		String[] array = p.split(amount);
-		if (array.length > 0) {
+		if (array != null && array.length > 0) {
 			Integer i = Integer.parseInt(array[0].trim());
-			if (i > 99 || i < 0) {
-				return null;
+			if (i > 100 || i < 0) {
+				return getInvalidAmount();
 			} else {
 				return i;
 			}
-			
+
 		}
 		return getInvalidAmount();
 	}
 
+	private Integer Summary(Integer p1, Integer p2)
+	{
+		if (p1 != null && p2 != null) {
+			return p1 + p2;
+		} else if (p1 == null && p2 != null) {
+			return p2;
+		} else if (p1 != null && p2 == null) {
+			return p1;
+		}
+		
+		return getInvalidAmount();
+	}
+	
 	private Integer parseAmountWithCents(String amount) {
-		Pattern p = getPattern("and");
-		String[] array = p.split(amount);
-		if (array.length == 2) {
-			return parseAmountTwoDigits(array[0]) + parseCents(array[1]);
+		
+		try
+		{
+			amount = amount.replaceAll("a(\\s)*n(\\s)*d", " and ");
+			Pattern p = getPattern("and");
+			String[] array = p.split(amount);
+
+			if (array != null) {
+				if (array.length == 2) {
+					Integer p1 = parseAmountTwoDigits(array[0]);
+					Integer p2 = parseCents(array[1]);
+					return Summary(p1, p2);
+				} else if (array.length == 3) {
+					Integer p1 = parseAmountTwoDigits(array[0] + " and "
+							+ array[1]);
+					Integer p2 = parseCents(array[2]);
+					return Summary(p1, p2);
+				}
+			}
+		} catch (Exception ex) {
+			System.err.println(ex.getMessage());
 		}
 
 		return getInvalidAmount();

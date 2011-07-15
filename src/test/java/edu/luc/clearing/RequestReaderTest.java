@@ -2,6 +2,11 @@ package edu.luc.clearing;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
 import java.io.StringReader;
 
 import org.junit.Before;
@@ -10,7 +15,7 @@ import org.junit.Test;
 public class RequestReaderTest {
 
 	private RequestReader reader;
-	
+
 	@Before
 	public void setup(){
 		reader = new RequestReader();
@@ -19,6 +24,16 @@ public class RequestReaderTest {
 	@Test
 	public void shouldReturnAnEmptyObjectForAnEmptyRequest() throws Exception {
 		assertEquals("{}", reader.respond(new StringReader("[]")));
+		//missing , here
+		assertEquals("{}", reader.respond(new StringReader("[\"two\"\"three and 100/100\"]")));
+		
+		assertEquals("{}", reader.respond(new StringReader("{}")));
+		
+		assertEquals("{}", reader.respond(new StringReader("")));
+		
+		assertEquals("{}", reader.respond(new StringReader("-")));
+		
+		assertEquals("{}", reader.respond(new StringReader("{\"five\"}")));
 	}
 
 	@Test
@@ -40,4 +55,5 @@ public class RequestReaderTest {
 	public void shouldIgnoreMalformatAmounts() throws Exception {
 		assertEquals("{}", reader.respond(new StringReader("[\"purple\"]")));
 	}
+
 }
