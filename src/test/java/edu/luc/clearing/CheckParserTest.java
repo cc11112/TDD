@@ -72,6 +72,7 @@ public class CheckParserTest {
 	
 	@Test
 	public void shouldMatchWithAndCents()  throws Exception{
+		assertEquals(250, parser.parseExpression("two and 50/100").intValue());
 		assertEquals(444, parser.parseExpression("four and 44/100").intValue());
 		assertEquals(1782, parser.parseExpression("seventeenand82/100").intValue());
 		assertEquals(9099, parser.parseExpression("ninety and 99/100").intValue());
