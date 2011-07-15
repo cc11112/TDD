@@ -82,10 +82,12 @@ public class CheckParserTest {
 		assertEquals(6900, parser.parseExpression("sixty nine").intValue());
 		assertEquals(4700, parser.parseExpression(" forty  SEVEN  ").intValue());
 		assertEquals(9100, parser.parseExpression(" NINeTY-one").intValue());
+		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE DOLLARS and").intValue());
+		assertEquals(7500, parser.parseExpression(" SEVENTY-THREE DOLLARS and two").intValue());
 		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE D-O-L-L-A-RS").intValue());
-		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE DO L LARS").intValue());
+		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE DO L LAR S").intValue());
 		assertEquals(3700, parser.parseExpression(" thirty DOLLARS and seven").intValue());
-		assertEquals(3700, parser.parseExpression(" thirty  and DOLLARS seven").intValue());
+		assertEquals(3700, parser.parseExpression(" thirty DOLLARS and seven DOLLARS").intValue());
 		assertEquals(8200, parser.parseExpression(" eighty - two").intValue());
 		assertEquals(8300, parser.parseExpression(" eighty- three").intValue());
 		assertEquals(8500, parser.parseExpression(" eighty-DOLLARS-five").intValue());
@@ -101,6 +103,8 @@ public class CheckParserTest {
 		assertEquals(null, parser.parseExpression("seven six"));
 		assertEquals(null, parser.parseExpression("fourteen seven"));
 		assertEquals(null, parser.parseExpression("nineteen one"));
+		assertEquals(null, parser.parseExpression("one hundred"));
+		assertEquals(null, parser.parseExpression(" thirty  and DOLLARS seven"));
 	}
 	
 	@Test
@@ -141,6 +145,7 @@ public class CheckParserTest {
 	
 	@Test
 	public void shouldMatchWithAndCents()  throws Exception{
+		assertEquals(7517, parser.parseExpression(" SEVENTY-THREE DOLLARS and two and 17/100").intValue());
 		assertEquals(0, parser.parseExpression("zero and 0/100").intValue());
 		assertEquals(100, parser.parseExpression("zero and 100/100").intValue());
 		assertEquals(100, parser.parseExpression("100/100").intValue());
@@ -152,6 +157,7 @@ public class CheckParserTest {
 		assertEquals(900, parser.parseExpression("nine and 0/100").intValue());
 		assertEquals(1159, parser.parseExpression("eleven and 59/100").intValue());
 		assertEquals(1861, parser.parseExpression("eighteen dollars and 61/100").intValue());
+		assertEquals(3754, parser.parseExpression(" thirty DOLLARS and seven DOLLARS and 54/100").intValue());
 		assertEquals(1861, parser.parseExpression("eighteen d-o-l-l-a-r s and 61/100").intValue());
 		assertEquals(3175, parser.parseExpression("thirty one d-o-l-l-a-r-s and 75/100").intValue());
 		assertEquals(1782, parser.parseExpression("seventeenand82/100").intValue());
