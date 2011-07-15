@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 
 public class CheckParser {
 	private static final Map<String, Integer> AMOUNTS = new HashMap<String, Integer>();
-	
-	public CheckParser(){
+
+	public CheckParser() {
 		AMOUNTS.put("zero", 0);
 		AMOUNTS.put("one", 100);
 		AMOUNTS.put("two", 200);
@@ -38,22 +38,62 @@ public class CheckParser {
 		AMOUNTS.put("eighty", 8000);
 		AMOUNTS.put("ninty", 9000);
 	}
-	
+
 	public Integer parseAmount(String amount) {
-		if (IsMatch("([a-z]+)\\sdollar[s]?", amount)) {
-			return parseAmountWithCentces(amount);
+		if (IsMatch("([a-z]+)\\s+dollar[s]?", amount)) {
+			return parseAmountWithDollars(amount);
+		} else if (IsMatch("([a-z]+)\\s([a-z]+)\\s*", amount)) {
+			return parseAmountTwoDigits(amount);
 		}
 		return AMOUNTS.get(amount.toLowerCase().trim());
 	}
+
+	private Integer parseAmounts(String amount) {
+		return AMOUNTS.get(amount.toLowerCase().trim());
+	}
 	
+	private Integer parseAmountTwoDigits(String amount) {
+		Pattern p = getPattern("\\s+");
+		String[] array = p.split(amount);
+
+		if (array.length > 0) {
+			Integer total = 0;
+			for(String s: array){
+				total += parseAmounts(s);
+			}
+			return total;
+		} else {
+			return parseAmounts("");
+		}
+	}
+	
+	
+	private Integer parseAmountWithDollars(String amount) {
+		//todo: remove dollar(s) 
+		
+		Pattern p = getPattern("\\s+");
+		String[] array = p.split(amount);
+
+		if (array.length > 0) {
+			return parseAmounts(array[0]);
+		} else {
+			return parseAmounts("");
+		}
+	}
+
 	private Integer parseAmountWithCentces(String amount) {
 		// todo:
 		return 0;
 	}
 
-	private boolean IsMatch(String regex, String amount) {
+	private Pattern getPattern(String regex) {
 		Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE
 				| Pattern.MULTILINE);
+		return p;
+	}
+
+	private boolean IsMatch(String regex, String amount) {
+		Pattern p = getPattern(regex);
 		Matcher m = p.matcher(amount);
 		return m.matches();
 	}

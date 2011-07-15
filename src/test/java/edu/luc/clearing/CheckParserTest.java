@@ -30,7 +30,20 @@ public class CheckParserTest {
 	
 	@Test
 	public void shouldMatchWithDollars() throws Exception {
-		assertEquals(0, parser.parseAmount("One dollar").intValue());
+		assertEquals(100, parser.parseAmount("One dollar").intValue());
+		assertEquals(200, parser.parseAmount("two dollars").intValue());
+		assertEquals(300, parser.parseAmount("three  dollars").intValue());
+	}
+	
+	@Test
+	public void shouldMatchWithTwoDigits() throws Exception{
+		assertEquals(2100, parser.parseAmount("twenty one").intValue());
+		assertEquals(7200, parser.parseAmount("seventy two").intValue());
+	}
+	
+	@Test
+	public void shouldMatchWithAndCentces()  throws Exception{
+		
 	}
 
 }
