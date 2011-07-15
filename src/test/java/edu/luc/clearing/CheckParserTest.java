@@ -26,6 +26,11 @@ public class CheckParserTest {
 		assertEquals(0, parser.parseExpression("zero").intValue());
 	}
 
+	@Test 
+	public void shouldReturnNullFoInvalidString() throws Exception{
+		assertEquals(null, parser.parseExpression("red"));
+	}
+	
 	@Test
 	public void shouldIgnoreSpace() throws Exception {
 		assertEquals(400, parser.parseExpression("Four ").intValue());
@@ -51,6 +56,7 @@ public class CheckParserTest {
 		assertEquals(2100, parser.parseExpression("twenty one").intValue());
 		assertEquals(7200, parser.parseExpression("seventy two").intValue());
 		assertEquals(5300, parser.parseExpression("  fifty   three ").intValue());
+		assertEquals(1300, parser.parseExpression("thirteen").intValue());
 	}
 
 	@Test
@@ -60,6 +66,8 @@ public class CheckParserTest {
 		assertEquals(null, parser.parseExpression("seventy eighty"));
 		assertEquals(null, parser.parseExpression("nine five"));
 		assertEquals(null, parser.parseExpression("seven six"));
+		assertEquals(null, parser.parseExpression("fourteen seven"));
+		assertEquals(null, parser.parseExpression("nineteen one"));
 	}
 	
 	@Test
@@ -68,12 +76,19 @@ public class CheckParserTest {
 		assertEquals(0, parser.parseExpression("0/100").intValue());
 		//invalid cents
 		assertEquals(null, parser.parseExpression("10"));
+		//invalid cents
+		assertEquals(null, parser.parseExpression("100/100"));
+		assertEquals(null, parser.parseExpression("101/100"));
+		assertEquals(null, parser.parseExpression("45461/100"));
+		assertEquals(null, parser.parseExpression("-1/100"));
 	}
 	
 	@Test
 	public void shouldMatchWithAndCents()  throws Exception{
 		assertEquals(250, parser.parseExpression("two and 50/100").intValue());
 		assertEquals(444, parser.parseExpression("four and 44/100").intValue());
+		assertEquals(1037, parser.parseExpression("ten and 37/100").intValue());
+		assertEquals(1861, parser.parseExpression("eighteen and 61/100").intValue());
 		assertEquals(1782, parser.parseExpression("seventeenand82/100").intValue());
 		assertEquals(9099, parser.parseExpression("ninety and 99/100").intValue());
 		assertEquals(9999, parser.parseExpression("ninety nine and 99/100").intValue());

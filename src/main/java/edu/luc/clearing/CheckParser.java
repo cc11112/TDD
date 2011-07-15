@@ -82,7 +82,7 @@ public class CheckParser {
 				if (i != null){
 					if (total == null){
 						total = 0;
-					} else if (total < 1000 || i > 900 ){
+					} else if (total < 2000 || i > 900 ){
 						return null;
 					}
 					total += i;
@@ -104,7 +104,13 @@ public class CheckParser {
 		Pattern p = getPattern("/100");
 		String[] array = p.split(amount);
 		if (array.length > 0) {
-			return Integer.parseInt(array[0].trim());
+			Integer i = Integer.parseInt(array[0].trim());
+			if (i > 99 || i < 0) {
+				return null;
+			} else {
+				return i;
+			}
+			
 		}
 		return getInvalidAmount();
 	}
