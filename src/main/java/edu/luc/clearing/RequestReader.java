@@ -2,7 +2,7 @@ package edu.luc.clearing;
 
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -23,10 +23,9 @@ public class RequestReader {
 		return checkParser;
 	}
 	
-	
 	public String respond(Reader requestData) {
 		Gson gson = new Gson();
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
 		List<String> checks = gson.fromJson(requestData, requestType());
 		for (String amount : checks) {
 			map.put(amount, checkParser.parseExpression(amount));

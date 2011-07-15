@@ -42,7 +42,7 @@ public class CheckParserTest {
 	}
 	
 	@Test
-	public void shouldReturnZeroOnlyDollar() throws Exception{
+	public void shouldReturnNullOnlyDollar() throws Exception{
 		assertEquals(null, parser.parseExpression("dollar"));
 	}
 	
@@ -51,6 +51,13 @@ public class CheckParserTest {
 		assertEquals(2100, parser.parseExpression("twenty one").intValue());
 		assertEquals(7200, parser.parseExpression("seventy two").intValue());
 		assertEquals(5300, parser.parseExpression("  fifty   three ").intValue());
+	}
+
+	@Test
+	public void shouldReturnNullIfTwoDigitsReverse() throws Exception{
+		assertEquals(null, parser.parseExpression("ten ten"));
+		assertEquals(null, parser.parseExpression("five twenty"));
+		assertEquals(null, parser.parseExpression("seventy eighty"));
 	}
 	
 	@Test

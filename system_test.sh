@@ -19,6 +19,22 @@ if [ $response != '{"four and 56/100":456}' ] ; then
 	exit 1
 fi
 
+response=`curl -H Content-Type:application/json -d '["eight]' http://$server/checkclearing`
+
+if [ $response != '{"eight":800}' ] ; then
+	echo $response
+	echo "TEST FAILED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	exit 1
+fi
+
+response=`curl -H Content-Type:application/json -d '["one","two and 50/100","three dollars"]' http://$server/checkclearing`
+
+if [ $response != '{"one":100,"two and 50/100":250,"three dollars":300}' ] ; then
+	echo $response
+	echo "TEST FAILED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	exit 1
+fi
+
 
 
 response=`curl -H Content-Type:application/json -d '["ninety nine and 99/100"]' http://$server/checkclearing`
