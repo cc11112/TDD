@@ -57,6 +57,11 @@ public class CheckParserTest {
 		assertEquals(7200, parser.parseExpression("seventy two").intValue());
 		assertEquals(5300, parser.parseExpression("  fifty   three ").intValue());
 		assertEquals(1300, parser.parseExpression("thirteen").intValue());
+		assertEquals(5000, parser.parseExpression("fifty").intValue());
+		assertEquals(8000, parser.parseExpression("eighty").intValue());
+		assertEquals(7400, parser.parseExpression("seventy four").intValue());
+		assertEquals(6900, parser.parseExpression("sixty nine").intValue());
+		assertEquals(4700, parser.parseExpression(" forty  SEVEN  ").intValue());
 	}
 
 	@Test
@@ -94,6 +99,10 @@ public class CheckParserTest {
 		assertEquals(9999, parser.parseExpression("ninety nine and 99/100").intValue());
 	}
 	
+	@Test
+	public void shouldReturnNullWithoutAnd()  throws Exception{
+		assertEquals(null, parser.parseExpression("thrity 99/100"));
+	}
 	
 
 }
