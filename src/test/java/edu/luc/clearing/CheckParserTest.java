@@ -45,6 +45,9 @@ public class CheckParserTest {
 		assertEquals(null, parser.parseExpression("[]"));
 		assertEquals(null, parser.parseExpression("[-]"));
 		assertEquals(null, parser.parseExpression("[*]"));
+		assertEquals(null, parser.parseExpression(" four-teen "));
+		assertEquals(null, parser.parseExpression(" fi/ve "));
+		assertEquals(null, parser.parseExpression(" thir*teen "));
 	}
 	
 	@Test
@@ -54,6 +57,7 @@ public class CheckParserTest {
 		assertEquals(1400, parser.parseExpression(" fourteen ").intValue());
 	}
 	
+	
 	@Test
 	public void shouldMatchWithDollars() throws Exception {
 		assertEquals(100, parser.parseExpression("One dollar").intValue());
@@ -61,6 +65,8 @@ public class CheckParserTest {
 		assertEquals(300, parser.parseExpression("three  dollars").intValue());
 		assertEquals(8000, parser.parseExpression(" Eighty  dollars  ").intValue());
 		assertEquals(7600, parser.parseExpression(" SEVENTY SIX  dollars  ").intValue());
+		assertEquals(1000, parser.parseExpression(" ten - dollar ").intValue());
+		assertEquals(9500, parser.parseExpression(" ninety-five - dollar ").intValue());
 	}
 	
 	@Test
@@ -123,25 +129,25 @@ public class CheckParserTest {
 		assertEquals(94, parser.parseExpression("9 4 \\ 100").intValue());
 		assertEquals(19, parser.parseExpression("19/100 dollars").intValue());
 		assertEquals(5, parser.parseExpression("5/100 dollar").intValue());
+	}
+	
+	@Test
+	public void shouReturnNullForInvalidCents() throws Exception {
 		
-		//invalid cents
 		assertEquals(null, parser.parseExpression("  /100"));
 		assertEquals(null, parser.parseExpression("/100"));
 		assertEquals(null, parser.parseExpression("/"));
 		assertEquals(null, parser.parseExpression("//"));
 		assertEquals(null, parser.parseExpression("\\"));
 		assertEquals(null, parser.parseExpression("/0"));
-		//invalid cents
 		assertEquals(null, parser.parseExpression("10"));
-		//invalid cents
-		//assertEquals(null, parser.parseExpression("100/100"));
 		assertEquals(null, parser.parseExpression("101/100"));
 		assertEquals(null, parser.parseExpression("45a461/100/1b00"));
 		assertEquals(null, parser.parseExpression("-1/100"));
 		assertEquals(null, parser.parseExpression("5-/100"));
-		assertEquals(null, parser.parseExpression("aa/100"));
+		assertEquals(null, parser.parseExpression("abcd/100"));
 		assertEquals(null, parser.parseExpression("&/*100"));
-		assertEquals(null, parser.parseExpression("44?/100"));		
+		assertEquals(null, parser.parseExpression("43?/100"));		
 		assertEquals(null, parser.parseExpression("(*)/(100)"));
 		assertEquals(null, parser.parseExpression("(*)/(99)"));
 	}
