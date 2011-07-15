@@ -6,16 +6,16 @@ import static org.hamcrest.CoreMatchers.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.luc.clearing.CheckClearingServlet;
+import edu.luc.clearing.CheckParser;
 
 
 public class AcceptanceTest {
 
-	private CheckClearingServlet servlet;
+	private CheckParser parser;
 
 	@Before
 	public void setUp(){
-		servlet = new CheckClearingServlet();
+		parser = new CheckParser();
 	}
 
 	@Test
@@ -29,10 +29,28 @@ public class AcceptanceTest {
     	assertThat(parsedAmountOf("seven"), is(equalTo(700)));
     	assertThat(parsedAmountOf("eight"), is(equalTo(800)));
     	assertThat(parsedAmountOf("nine"), is(equalTo(900)));
+    	assertThat(parsedAmountOf("ten"), is(equalTo(1000)));
+    	assertThat(parsedAmountOf("eleven"), is(equalTo(1100)));
+    	assertThat(parsedAmountOf("twleve"), is(equalTo(1200)));
+    	assertThat(parsedAmountOf("threen"), is(equalTo(1300)));
+    	assertThat(parsedAmountOf("fourteen"),is(equalTo( 1400)));
+    	assertThat(parsedAmountOf("fifteen"), is(equalTo(1500)));
+    	assertThat(parsedAmountOf("sixteen"), is(equalTo(1600)));
+    	assertThat(parsedAmountOf("seventeen"), is(equalTo(1700)));
+    	assertThat(parsedAmountOf("eighteen"), is(equalTo(1800)));
+    	assertThat(parsedAmountOf("ninteen"), is(equalTo(1900)));
+    	assertThat(parsedAmountOf("twenty"),is(equalTo( 2000)));
+    	assertThat(parsedAmountOf("thirty"),is(equalTo( 3000)));
+    	assertThat(parsedAmountOf("fourty"), is(equalTo(4000)));
+    	assertThat(parsedAmountOf("fifty"), is(equalTo(5000)));
+    	assertThat(parsedAmountOf("sixty"), is(equalTo(6000)));
+    	assertThat(parsedAmountOf("seventy"), is(equalTo(7000)));
+    	assertThat(parsedAmountOf("eighty"), is(equalTo(8000)));
+    	assertThat(parsedAmountOf("ninty"), is(equalTo(9000)));
   	}
 
 	private int parsedAmountOf(String amount) {
-		return servlet.parseAmount(amount).intValue();
+		return parser.parseAmount(amount).intValue();
 	}
 	
 	
