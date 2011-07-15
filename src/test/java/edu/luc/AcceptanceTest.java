@@ -31,26 +31,26 @@ public class AcceptanceTest {
 		assertThat(parsedAmountOf("nine"), is(equalTo(900)));
 		assertThat(parsedAmountOf("ten"), is(equalTo(1000)));
 		assertThat(parsedAmountOf("eleven"), is(equalTo(1100)));
-		assertThat(parsedAmountOf("twleve"), is(equalTo(1200)));
-		assertThat(parsedAmountOf("threen"), is(equalTo(1300)));
+		assertThat(parsedAmountOf("twelve"), is(equalTo(1200)));
+		assertThat(parsedAmountOf("thirteen"), is(equalTo(1300)));
 		assertThat(parsedAmountOf("fourteen"), is(equalTo(1400)));
 		assertThat(parsedAmountOf("fifteen"), is(equalTo(1500)));
 		assertThat(parsedAmountOf("sixteen"), is(equalTo(1600)));
 		assertThat(parsedAmountOf("seventeen"), is(equalTo(1700)));
 		assertThat(parsedAmountOf("eighteen"), is(equalTo(1800)));
-		assertThat(parsedAmountOf("ninteen"), is(equalTo(1900)));
+		assertThat(parsedAmountOf("nineteen"), is(equalTo(1900)));
 		assertThat(parsedAmountOf("twenty"), is(equalTo(2000)));
 		assertThat(parsedAmountOf("thirty"), is(equalTo(3000)));
-		assertThat(parsedAmountOf("fourty"), is(equalTo(4000)));
+		assertThat(parsedAmountOf("forty"), is(equalTo(4000)));
 		assertThat(parsedAmountOf("fifty"), is(equalTo(5000)));
 		assertThat(parsedAmountOf("sixty"), is(equalTo(6000)));
 		assertThat(parsedAmountOf("seventy"), is(equalTo(7000)));
 		assertThat(parsedAmountOf("eighty"), is(equalTo(8000)));
-		assertThat(parsedAmountOf("ninty"), is(equalTo(9000)));
+		assertThat(parsedAmountOf("ninety"), is(equalTo(9000)));
 	}
 
 	private int parsedAmountOf(String amount) {
-		return parser.parseAmount(amount).intValue();
+		return parser.parseExpression(amount).intValue();
 	}
 	
 	

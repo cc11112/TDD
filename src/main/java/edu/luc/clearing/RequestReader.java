@@ -29,7 +29,7 @@ public class RequestReader {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		List<String> checks = gson.fromJson(requestData, requestType());
 		for (String amount : checks) {
-			map.put(amount, checkParser.parseAmount(amount));
+			map.put(amount, checkParser.parseExpression(amount));
 		}
 
 		return new Gson().toJson(map);
