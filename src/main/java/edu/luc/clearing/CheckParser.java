@@ -82,7 +82,7 @@ public class CheckParser {
 				if (i != null){
 					if (total == null){
 						total = 0;
-					} else if (total <= i || i > 900 ){
+					} else if (total < 1000 || i > 900 ){
 						return null;
 					}
 					total += i;

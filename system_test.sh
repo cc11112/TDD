@@ -46,13 +46,22 @@ if [ $response != '{"ninety nine and 99/100":9999}' ] ; then
 fi
 
 
-response=`curl -H Content-Type:application/json -d '["twenty]' http://$server/checkclearing`
+response=`curl -H Content-Type:application/json -d '["twenty"]' http://$server/checkclearing`
 
 if [ $response != '{"twenty":2000}' ] ; then
 	echo $response
 	echo "TEST FAILED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 	exit 1
 fi
+
+response=`curl -H Content-Type:application/json -d '["fifty eight and 31/100"]' http://$server/checkclearing`
+
+if [ $response != '{"fifty eight and 31/100":5831}' ] ; then
+	echo $response
+	echo "TEST FAILED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	exit 1
+fi
+
 
 
 echo "TEST Succeeded."

@@ -58,6 +58,8 @@ public class CheckParserTest {
 		assertEquals(null, parser.parseExpression("ten ten"));
 		assertEquals(null, parser.parseExpression("five twenty"));
 		assertEquals(null, parser.parseExpression("seventy eighty"));
+		assertEquals(null, parser.parseExpression("nine five"));
+		assertEquals(null, parser.parseExpression("seven six"));
 	}
 	
 	@Test
