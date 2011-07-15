@@ -81,11 +81,14 @@ public class CheckParserTest {
 		assertEquals(7400, parser.parseExpression("seventy four").intValue());
 		assertEquals(6900, parser.parseExpression("sixty nine").intValue());
 		assertEquals(4700, parser.parseExpression(" forty  SEVEN  ").intValue());
+		assertEquals(4700, parser.parseExpression(" forty  SEVEN  dollar").intValue());
 		assertEquals(9100, parser.parseExpression(" NINeTY-one").intValue());
+		assertEquals(9900, parser.parseExpression(" NINeTY-nine dollars").intValue());
 		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE DOLLARS and").intValue());
 		assertEquals(7500, parser.parseExpression(" SEVENTY-THREE DOLLARS and two").intValue());
 		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE D-O-L-L-A-RS").intValue());
 		assertEquals(7300, parser.parseExpression(" SEVENTY-THREE DO L LAR S").intValue());
+		assertEquals(4700, parser.parseExpression(" forty  and DOLLARS seven").intValue());
 		assertEquals(3700, parser.parseExpression(" thirty DOLLARS and seven").intValue());
 		assertEquals(3700, parser.parseExpression(" thirty DOLLARS and seven DOLLARS").intValue());
 		assertEquals(8200, parser.parseExpression(" eighty - two").intValue());
@@ -104,7 +107,7 @@ public class CheckParserTest {
 		assertEquals(null, parser.parseExpression("fourteen seven"));
 		assertEquals(null, parser.parseExpression("nineteen one"));
 		assertEquals(null, parser.parseExpression("one hundred"));
-		assertEquals(null, parser.parseExpression(" thirty  and DOLLARS seven"));
+		
 	}
 	
 	@Test
@@ -148,6 +151,8 @@ public class CheckParserTest {
 		assertEquals(7517, parser.parseExpression(" SEVENTY-THREE DOLLARS and two and 17/100").intValue());
 		assertEquals(0, parser.parseExpression("zero and 0/100").intValue());
 		assertEquals(100, parser.parseExpression("zero and 100/100").intValue());
+		assertEquals(699, parser.parseExpression("six and 99\\100").intValue());
+		assertEquals(326, parser.parseExpression("three and 26 / 100 dollars").intValue());
 		assertEquals(100, parser.parseExpression("100/100").intValue());
 		assertEquals(200, parser.parseExpression("one and 100/100").intValue());
 		assertEquals(250, parser.parseExpression("two and 50/100").intValue());

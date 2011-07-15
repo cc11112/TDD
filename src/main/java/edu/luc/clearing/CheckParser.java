@@ -55,13 +55,13 @@ public class CheckParser {
 			if (amount != null) {
 
 				amount = amount.toLowerCase().trim();
-				amount = amount.replace('\\', '/'); // .replaceAll("-","")
+				amount = amount.replace('\\', '/').replaceAll(Dollars, " "); // .replaceAll("-","")
 
 				if (IsMatch(
 						"([a-z\\s,\\-]+)([\\s]*)+((a(\\s)*n(\\s)*d)?(\\s?)[\\d,\\s]+/(\\s)*1(\\s)*0(\\s)*0(\\s*))",
 						amount)) {
 					return parseAmountWithCents(amount);
-				} else if (IsMatch("([a-z\\s,\\-]+)(\\s*)+d(\\s)*o(\\s)*l(\\s)*l(\\s)*a(\\s)*r(\\s)*([s]?)", amount)) {
+				} else if (IsMatch("([a-z\\s,\\-]+)(\\s*)", amount)) {
 					return parseAmountWithDollars(amount);
 				} else if (IsMatch("([a-z\\s,\\-]+)(\\s*)([a-z]+)", amount)) {
 					return parseAmountTwoDigits(amount);
