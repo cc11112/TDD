@@ -55,5 +55,23 @@ public class RequestReaderTest {
 	public void shouldIgnoreMalformatAmounts() throws Exception {
 		assertEquals("{}", reader.respond(new StringReader("[\"purple\"]")));
 	}
+	
+	@Test
+	public void shouldTestFromFile() throws Exception{
+		String fileName = "/home/crane/Projects/TestDriven";
+		
+		StringBuilder sb = new StringBuilder();
+		try {
+		    BufferedReader in = new BufferedReader(new FileReader(fileName));
+		    String str;
+		    while ((str = in.readLine()) != null) {
+		        sb.append(str).append("\n");
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		
+		assertEquals("{}", reader.respond(new StringReader(sb.toString())));
+	}
 
 }

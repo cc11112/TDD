@@ -3,13 +3,12 @@ package edu.luc.clearing;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

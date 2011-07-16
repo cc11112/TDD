@@ -182,10 +182,15 @@ public class CheckParserTest {
 	@Test
 	public void shouldReturnNullWithoutAnd()  throws Exception{
 		assertEquals(null, parser.parseExpression("thirty 99/100"));
-		assertEquals(null, parser.parseExpression("thirty and99and/100"));
-		assertEquals(null, parser.parseExpression("thirty and99and/100and"));
 		assertEquals(null, parser.parseExpression("thirty/100"));
 	}
+	
+	@Test
+	public void shouldReturNullMultiAnd() throws Exception{
+		assertEquals(null, parser.parseExpression("thirty and99and/100"));
+		assertEquals(null, parser.parseExpression("thirty and99and/100and"));
+	}
+	
 	
 
 }

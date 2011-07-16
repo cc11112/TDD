@@ -88,14 +88,6 @@ public class CheckParser {
 		return null;
 	}
 
-	private Integer parseFromArrayFirstElement(String[] array) {
-		if (array.length > 0) {
-			return parseAmountTwoDigits(array[0]);
-		} else {
-			return getInvalidAmount();
-		}
-	}
-
 	private String RemoveMiddleSpace(String amount){
 		if (amount != null){
 			return amount.replaceAll("-", " ").replaceAll(Dollars, " dollar ");
@@ -111,21 +103,24 @@ public class CheckParser {
 		Pattern p = getPattern("\\s+");
 		String[] array = p.split(amount);
 
-		if (array.length > 0) {
+		if (array != null && array.length > 0) {
 			Integer total = null;
-			for (String  s : array) {
+			for (String s : array) {
 				Integer n = parseAmount(s);
-				if (n == null && total != null){
+				if (n == null && total != null) {
 					return getInvalidAmount();
-				}
-				else
-				{
-					if (total == null || (total == 0 && n == 0)) {
+				} else {
+					if ( n != null && 
+							( total == null || (total !=null && total == 0 && n == 0)) ) {
 						total = 0;
 					} else if (total < 2000 || n > 900) {
 						return getInvalidAmount();
 					}
-					total += n;
+
+					if (n != null && total != null) {
+						total += n;
+					}
+
 				}
 			}
 			return total;
