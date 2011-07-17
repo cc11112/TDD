@@ -149,7 +149,14 @@ public class CheckParserTest {
 		assertEquals(30, parser.parseExpression("thirty/100").intValue());
 		assertEquals(92, parser.parseExpression("ninety two/100").intValue());
 		assertEquals(85, parser.parseExpression("eighty-five/100").intValue());
-		assertEquals(73, parser.parseExpression("seventy-three dollars/100").intValue());
+		assertEquals(73, parser.parseExpression("seventy-three/100 dollars").intValue());
+		assertEquals(73, parser.parseExpression("seventy-three/100 dollar").intValue());
+		assertEquals(7300, parser.parseExpression("seventy-three dollars/100").intValue());
+		assertEquals(7300, parser.parseExpression("seventy-three dollars 0/100").intValue());
+		assertEquals(7300, parser.parseExpression("seventy-three dollars zero cent").intValue());
+		assertEquals(7300, parser.parseExpression("seventy-three dollars zero ").intValue());
+		assertEquals(7300, parser.parseExpression("seventy-three dollars zero/100 ").intValue());
+		assertEquals(7400, parser.parseExpression("seventy-three dollars 100/100 ").intValue());
 		//cents
 		assertEquals(23, parser.parseExpression("23 cents").intValue());
 		assertEquals(1, parser.parseExpression("1 cent").intValue());
@@ -210,6 +217,7 @@ public class CheckParserTest {
 		assertEquals(6924, parser.parseExpression(" sixty nine dollars twenty four cents").intValue());
 		assertEquals(5900, parser.parseExpression(" 50 eight dollars 100/100 cents").intValue());
 		assertEquals(2100, parser.parseExpression(" twenty one dollars 0 cents").intValue());
+		assertEquals(7300, parser.parseExpression("seventy-three dollars 0/100").intValue());
 		assertEquals(4700, parser.parseExpression(" fourty seven dollars 0 ").intValue());
 		assertEquals(4700, parser.parseExpression(" fourty seven dollars no cents ").intValue());
 		assertEquals(4700, parser.parseExpression(" fourty seven dollars zero cents ").intValue());

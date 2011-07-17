@@ -65,7 +65,9 @@ public class CheckParser {
 
 				if (IsMatch(MatchAnd, amount)) {
 					return parseAndAmount(amount);
-				} else if (IsMatch("([a-z,0-9,\\s]+)(dollar[s]?)([a-z,0-9,/,\\s]+)cent[s]?(\\s*)", amount)){
+				} else if (IsMatch("([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,/,\\s]+)cent[s]?(\\s*)", amount)
+						|| IsMatch("([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,\\s]+)/(\\s)*100(\\s*)", amount)
+						){
 					return parseWithoutAmount(amount);
 				} else if (IsMatch("([a-z,0-9,\\s]+)cent[s]?(\\s*)", amount) 
 						|| IsMatch(MatchCents,amount)
