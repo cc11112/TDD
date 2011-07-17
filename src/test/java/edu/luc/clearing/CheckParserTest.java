@@ -197,6 +197,7 @@ public class CheckParserTest {
 		assertEquals(100, parser.parseExpression("100/100").intValue());
 		assertEquals(200, parser.parseExpression("one and 100/100").intValue());
 		assertEquals(250, parser.parseExpression("two and 50/100").intValue());
+		assertEquals(400, parser.parseExpression("four and 0/100").intValue());
 		assertEquals(5612, parser.parseExpression("50 six and 12/100").intValue());
 		assertEquals(444, parser.parseExpression("four and44/100").intValue());
 		assertEquals(1037, parser.parseExpression("ten and 37/100").intValue());

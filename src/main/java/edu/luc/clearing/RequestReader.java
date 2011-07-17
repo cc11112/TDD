@@ -14,12 +14,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class RequestReader {
-	private static final Logger log = Logger.getLogger(RequestReader.class
-			.getName());
+	private static final Logger log = Logger.getLogger(RequestReader.class.getName());
+	
 	private CheckParser checkParser;
+	private DatastoreAdapter dataStore;
 
-	public RequestReader() {
+	public RequestReader(DatastoreAdapter dataStore) {
 		checkParser = getCheckParser();
+		this.dataStore = dataStore;
 	}
 
 	private CheckParser getCheckParser() {
@@ -47,6 +49,8 @@ public class RequestReader {
 
 		if (checks != null) {
 			for (String amount : checks) {
+				dataStore.saveRow("Checks", amount);
+				
 				Integer parsedValue = checkParser.parseExpression(amount);
 				if (parsedValue == null) {
 					System.err.println("could not parse amount " + amount);
@@ -62,7 +66,6 @@ public class RequestReader {
 	private String LogRequestData(String s) {
 		if (s != null) {
 			log.info(s);
-			//System.out.println(s);
 		}
 		return s;
 	}

@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="/home/crane/.gradle/cache/com.google.appengine/appengine-api-1.0-sdk/jars/appengine-api-1.0-sdk-1.5.1.jar" exported="true"/>
 	<classpathentry sourcepath="/home/crane/.gradle/cache/org.mockito/mockito-all/sources/mockito-all-1.8.5-sources.jar" kind="lib" path="/home/crane/.gradle/cache/org.mockito/mockito-all/jars/mockito-all-1.8.5.jar" exported="true"/>
 	<classpathentry sourcepath="/home/crane/.gradle/cache/junit/junit/sources/junit-4.8.2-sources.jar" kind="lib" path="/home/crane/.gradle/cache/junit/junit/jars/junit-4.8.2.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/crane/.gradle/cache/com.google.appengine/appengine-testing/jars/appengine-testing-1.5.2.jar" exported="true"/>
 	<classpathentry sourcepath="/home/crane/.gradle/cache/com.google.code.gson/gson/sources/gson-1.7.1-sources.jar" kind="lib" path="/home/crane/.gradle/cache/com.google.code.gson/gson/jars/gson-1.7.1.jar" exported="true"/>
 </classpath>

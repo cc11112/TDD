@@ -1,30 +1,29 @@
 package edu.luc.clearing;
 
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StreamTokenizer;
 import java.io.StringReader;
 
 import org.junit.Before;
 import org.junit.Test;
 
+
 public class RequestReaderTest {
 
 	private RequestReader reader;
+	private DatastoreAdapter dataStore;
 
 	@Before
 	public void setup(){
-		reader = new RequestReader();
+		dataStore = mock(DatastoreAdapter.class);
+		reader = new RequestReader(dataStore);
 	}
 
 	@Test
 	public void shouldReturnAnEmptyObjectForAnEmptyRequest() throws Exception {
 		assertEquals("{}", reader.respond(new StringReader("[]")));
-		//missing , here
+		//missing ',' here
 		assertEquals("{}", reader.respond(new StringReader("[\"two\"\"three and 100/100\"]")));
 		
 		assertEquals("{}", reader.respond(new StringReader("{}")));
@@ -46,8 +45,8 @@ public class RequestReaderTest {
 	
 	@Test
 	public void shouldReturnMultiCheckValues() throws Exception {
-		//assertEquals("{\"one\":100,\"two and 50/100\":250,\"three dollars\":300}",
-		//		reader.respond(new StringReader("[\"one\",\"two and 50/100\",\"three dollars\"]")));
+		assertEquals("{\"one\":100,\"two and 50/100\":250,\"three dollars\":300}",
+				reader.respond(new StringReader("[\"one\",\"two and 50/100\",\"three dollars\"]")));
 	}
 
 	
@@ -57,21 +56,9 @@ public class RequestReaderTest {
 	}
 	
 	@Test
-	public void shouldTestFromFile() throws Exception{
-		String fileName = "/home/crane/Projects/TestDriven";
-		
-		StringBuilder sb = new StringBuilder();
-		try {
-		    BufferedReader in = new BufferedReader(new FileReader(fileName));
-		    String str;
-		    while ((str = in.readLine()) != null) {
-		        sb.append(str).append("\n");
-		    }
-		    in.close();
-		} catch (IOException e) {
-		}
-		
-		assertEquals("{}", reader.respond(new StringReader(sb.toString())));
+	public void shouldSaveAmountsInDataStore() throws Exception{
+		reader.respond(new StringReader("[\"one\"]"));
+		verify(dataStore).saveRow("Checks", "one");
 	}
 
 }
