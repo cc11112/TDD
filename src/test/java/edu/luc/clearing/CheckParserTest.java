@@ -145,7 +145,7 @@ public class CheckParserTest {
 		assertEquals(39, parser.parseExpression("thirty-nine/100 dollars").intValue());
 		assertEquals(5, parser.parseExpression("5/100 dollar").intValue());
 		assertEquals(39, parser.parseExpression(" 39 / 1 0 0").intValue());
-		
+		assertEquals(0, parser.parseExpression("zero/100").intValue());		
 		assertEquals(30, parser.parseExpression("thirty/100").intValue());
 		assertEquals(92, parser.parseExpression("ninety two/100").intValue());
 		assertEquals(85, parser.parseExpression("eighty-five/100").intValue());
