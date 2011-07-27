@@ -250,12 +250,17 @@ public class CheckParserTest {
 	}
 	
 	@Test
+	public void shouldHandleMultiAnd() throws Exception{
+		assertEquals(3754, parser.parseExpression(" thirty DOLLARS and seven DOLLARS and 54/100").intValue());
+		assertEquals(3175, parser.parseExpression("thirty and one dollars and 75/100").intValue());
+		assertEquals(5963, parser.parseExpression("50 and nine dollars + 63 cents").intValue());
+		assertEquals(9372, parser.parseExpression("ninety and 3 dollars & 72/100 dollar").intValue());
+	}
+	
+	@Test
 	public void shouldReturNullMultiAnd() throws Exception{
 		assertEquals(null, parser.parseExpression("thirty and99and/100"));
 		assertEquals(null, parser.parseExpression("thirty and99and/100and"));
-		assertEquals(null, parser.parseExpression(" thirty DOLLARS and seven DOLLARS and 54/100"));
-		assertEquals(null, parser.parseExpression("thirty and one dollars and 75/100"));
-		
 	}
 	
 	@Test
@@ -266,6 +271,7 @@ public class CheckParserTest {
 		assertEquals(699, parser.parseExpression("six + 99\\100").intValue());
 		assertEquals(326, parser.parseExpression("three + 26 / 100 dollars").intValue());
 		assertEquals(100, parser.parseExpression("+100/100").intValue());
+		assertEquals(2996, parser.parseExpression("Twenty Nine Dollar + 96 Cents").intValue());
 		assertEquals(200, parser.parseExpression("one + 100/100").intValue());
 		assertEquals(250, parser.parseExpression("two + 50 cent").intValue());
 		assertEquals(1000, parser.parseExpression("ten + 0/100").intValue());
@@ -311,7 +317,8 @@ public class CheckParserTest {
 	}
 
 	@Test
-	public void shouldTreatDollars()throws Exception{
+	public void shouldTreatDollarsSymbol()throws Exception{
+		assertEquals(755, parser.parseExpression("$7 + 55 Cent").intValue());
 		assertEquals(1039, parser.parseExpression("$10 and 39/100").intValue());
 		assertEquals(1116, parser.parseExpression("$eleven + 16/100").intValue());
 		assertEquals(916, parser.parseExpression("$nine and 16 cents").intValue());

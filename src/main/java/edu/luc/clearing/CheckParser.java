@@ -145,12 +145,11 @@ public class CheckParser {
 					}
 					return Summary(p1, p2);
 				} 
-				//TODO:SUPPORT 3 AND HERE
-				/*else if (array.length == 3) {
-					Integer p1 = parseAndAmount(array[0] + " and " + array[1]);
+				else if (array.length == 3) {
+					Integer p1 = parseDollarsPart(array[0] + " " + array[1]);
 					Integer p2 = parseCentsPart(array[2]);
 					return Summary(p1, p2);
-				}*/
+				}
 			}
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
@@ -218,7 +217,7 @@ public class CheckParser {
 
 	private Integer parseDollarsPart(String amount) {
 
-		// TODO:
+		// 
 		// support one, two, ten, twenty nine,
 		// three dollars, 13 dollars, ninety-nine
 		// sixty 6 dollars 5/100 dollars
@@ -289,7 +288,7 @@ public class CheckParser {
 
 		amount = amount.replaceAll(Cents, "");
 
-		// TODO:
+		// 
 		// support these types: 75, 12/100, ten, eighty five /100, nine / one
 		// hundred
 		// 0/100 0,
