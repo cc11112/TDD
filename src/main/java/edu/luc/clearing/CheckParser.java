@@ -54,6 +54,41 @@ public class CheckParser {
 		// AMOUNTS.put("ninty", 9000);
 	}
 
+	private String ReplaceDollarSymbol(String amount) {
+		if (amount != null) {
+			if (amount.startsWith("usd")){
+				amount = amount.replaceAll("usd", "");
+			}
+			
+			if (amount.startsWith("$")){
+				amount = amount.replace('$', ' ');
+				if (!amount.contains("and")){
+					amount += " dollars";
+				}
+			}
+			else if (amount.contains("$"))
+			{
+				amount = amount.replaceAll("\\$", " dollars ");
+			}
+		}
+		return amount;
+	}
+
+	private String ReplaceDotSymbol(String amount) {
+		//TODO: Handle . expression
+		/*
+		if (amount != null) {
+			if (amount.contains(".") && !amount.contains("/") && !amount.contains("cent"))
+			{
+				amount = amount.replaceAll("dollars", " ").replaceAll("dollar", " ");
+				//TODO: Check parse .dot
+				amount = amount.replaceAll("\\.", " and ") + "/100";
+			}
+		}
+		*/
+		return amount;
+	}
+	
 	public Integer parseExpression(String amount) {
 
 		try {
@@ -61,8 +96,11 @@ public class CheckParser {
 			if (amount != null) {
 
 				amount = amount.toLowerCase().trim();
-				amount = amount.replace('\\', '/');
+				amount = amount.replace('\\', '/').replace('&','+').replaceAll("\\+"," and ");
 
+				amount = ReplaceDollarSymbol(amount);
+				amount = ReplaceDotSymbol(amount);
+				
 				if (IsMatch(MatchAnd, amount)) {
 					return parseAndAmount(amount);
 				} else if (IsMatch("([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,/,\\s]+)cent[s]?(\\s*)", amount)
