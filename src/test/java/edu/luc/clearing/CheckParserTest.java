@@ -216,6 +216,7 @@ public class CheckParserTest {
 		assertEquals(199, parser.parseExpression("one and 99/100 dollar ").intValue());
 		assertEquals(200, parser.parseExpression("one and 100/100").intValue());
 		assertEquals(250, parser.parseExpression("two and 50/100").intValue());
+		assertEquals(284, parser.parseExpression("2 And 84 Cents").intValue());
 		assertEquals(400, parser.parseExpression("4 and 0/100").intValue());
 		assertEquals(5612, parser.parseExpression("50 six and 12/100").intValue());
 		assertEquals(444, parser.parseExpression("four and44/100").intValue());
@@ -247,6 +248,7 @@ public class CheckParserTest {
 	@Test
 	public void shouldReturnNullWithoutAnd()  throws Exception{
 		assertEquals(null, parser.parseExpression("thirty 99/100"));
+		assertEquals(null, parser.parseExpression("$11  76cents"));
 	}
 	
 	@Test
@@ -255,12 +257,19 @@ public class CheckParserTest {
 		assertEquals(3175, parser.parseExpression("thirty and one dollars and 75/100").intValue());
 		assertEquals(5963, parser.parseExpression("50 and nine dollars + 63 cents").intValue());
 		assertEquals(9372, parser.parseExpression("ninety and 3 dollars & 72/100 dollar").intValue());
+		assertEquals(2999, parser.parseExpression("$20+ 9 & 99/100 ").intValue());
+		assertEquals(4999, parser.parseExpression("$forty aNd 9 + 99 cents ").intValue());
 	}
 	
 	@Test
 	public void shouldReturNullMultiAnd() throws Exception{
-		assertEquals(null, parser.parseExpression("thirty and99and/100"));
+		assertEquals(null, parser.parseExpression("thirty centsand99and/100"));
 		assertEquals(null, parser.parseExpression("thirty and99and/100and"));
+		assertEquals(null, parser.parseExpression("41 and 1 and + 99/100+"));
+		assertEquals(null, parser.parseExpression("$79 & 1 and + 99/100+"));
+		assertEquals(null, parser.parseExpression("$31 & 5 and & 99/100+"));
+		assertEquals(null, parser.parseExpression("$12+ 9 & 99/100& "));
+		assertEquals(null, parser.parseExpression("thirty and + 99/100"));
 	}
 	
 	@Test
@@ -314,6 +323,7 @@ public class CheckParserTest {
 		assertEquals(8000, parser.parseExpression(" SEVENTY-NINE DOLLARS &100 / 100").intValue());
 		assertEquals(4700, parser.parseExpression(" fourty seven dollars & zero cents ").intValue());
 		assertEquals(6700, parser.parseExpression(" sixty seven dollars & without cents ").intValue());
+		assertEquals(5049, parser.parseExpression("50$ & 49 cents").intValue());
 	}
 
 	@Test
@@ -330,6 +340,7 @@ public class CheckParserTest {
 		assertEquals(100, parser.parseExpression("100/100 $").intValue());
 		assertEquals(9101, parser.parseExpression("$91 AND 1 CENT").intValue());
 		assertEquals(1704, parser.parseExpression("17$ AND FOUR CENTS").intValue());
+		assertEquals(1404, parser.parseExpression("14 AND FOUR CENTS$").intValue());
 		//usd
 		assertEquals(1013, parser.parseExpression("USD10 and 13/100").intValue());
 		assertEquals(1176, parser.parseExpression("USD$11 and 76 / 100").intValue());
@@ -337,7 +348,7 @@ public class CheckParserTest {
 	
 	@Test
 	public void shouldReturNullIfEndOfDollars() throws Exception{
-		//assertEquals(null, parser.parseExpression("17 AND FOUR CENTS$"));
+		
 	}
 	
 	/*

@@ -44,14 +44,15 @@ public class CheckParser {
 		AMOUNTS.put("twenty", 2000);
 		AMOUNTS.put("thirty", 3000);
 		AMOUNTS.put("forty", 4000);
-		AMOUNTS.put("fourty", 4000);
+		AMOUNTS.put("fourty", 4000); //support typo
 		AMOUNTS.put("fifty", 5000);
 		AMOUNTS.put("sixty", 6000);
 		AMOUNTS.put("seventy", 7000);
 		AMOUNTS.put("eighty", 8000);
 		AMOUNTS.put("ninety", 9000);
+		AMOUNTS.put("ninty", 9000); //support typo
 		//AMOUNTS.put("one hundred", 10000);
-		// AMOUNTS.put("ninty", 9000);
+		
 	}
 
 	private String ReplaceDollarSymbol(String amount) {
@@ -146,9 +147,13 @@ public class CheckParser {
 					return Summary(p1, p2);
 				} 
 				else if (array.length == 3) {
-					Integer p1 = parseDollarsPart(array[0] + " " + array[1]);
-					Integer p2 = parseCentsPart(array[2]);
-					return Summary(p1, p2);
+					Integer p1 = parseDollarsPart(array[0]);
+					Integer p2 = parseDollarsPart(array[1]);
+					//cents
+					Integer p3 = parseCentsPart(array[2]);
+					if (p1 != null && p2 != null && p3 != null){
+						return Summary(Summary(p1, p2), p3);
+					}
 				}
 			}
 		} catch (Exception ex) {

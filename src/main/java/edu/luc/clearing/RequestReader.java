@@ -49,9 +49,11 @@ public class RequestReader {
 
 		if (checks != null) {
 			for (String amount : checks) {
-				//don't save when upload goole appengine
-				//it will cause timeout issue
-				//dataStore.saveRow("Checks", amount);
+				
+				//don't save when upload google appengine
+				//it will cause timeout issue !!!
+				//
+				dataStore.saveRow("Checks", amount);
 				
 				Integer parsedValue = checkParser.parseExpression(amount);
 				if (parsedValue == null) {
