@@ -7,7 +7,7 @@ function cleanup {
 	rm gradle.properties
 }
 
-trape "cleanup" INT TERM EXIT
+trap "cleanup" INT TERM EXIT
 
 function unknown_files {
 	unknown_file_count=`git status --porcelain | grep "^??" | wc -l`
@@ -36,7 +36,7 @@ fi
 
 gradle gaeRun &
 server_pid=$!
-if [ "$server_pid" -gt 0 ] ; then
+if [ ! "$server_pid" -gt 0 ] ; then
 	echo "Server failed to start"
 	exit 1
 fi
@@ -45,7 +45,7 @@ echo -n "Waiting for local server to start..."
 server_status=1
 while [ ! "$server_status" -gt 0 ] ; do
 	echo -n .
-	echo http://$server/checkclearing
+	echo http://$server
 	server_status=$?
 	sleep 1
 done
