@@ -39,6 +39,8 @@ public class CheckParserTest {
 		assertEquals(0, parser.parseExpression("zero").intValue());
 		assertEquals(0, parser.parseExpression("zero and ZERO").intValue());
 		assertEquals(0, parser.parseExpression("ZERO zero ").intValue());
+		assertEquals(0, parser.parseExpression("$no ").intValue());
+		assertEquals(0, parser.parseExpression("na cents ").intValue());
 		assertEquals(9000, parser.parseExpression("ninety zero").intValue());
 		assertEquals(7000, parser.parseExpression("seventy - zero").intValue());
 	}

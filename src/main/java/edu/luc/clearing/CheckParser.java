@@ -17,6 +17,8 @@ public class CheckParser {
 	public CheckParser() {
 		AMOUNTS.put("without", 0);
 		AMOUNTS.put("no", 0);
+		AMOUNTS.put("na", 0);
+		AMOUNTS.put("n/a", 0);
 		AMOUNTS.put("zero", 0);
 		// AMOUNTS.put("penny", 1);
 		// AMOUNTS.put("nickel", 5);
