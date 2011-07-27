@@ -74,21 +74,31 @@ public class CheckParser {
 				amount = amount.replaceAll("\\$", " dollars ");
 			}
 		}
+		
 		return amount;
 	}
 
 	private String ReplaceDotSymbol(String amount) {
 		//TODO: Handle . expression
-		/*
+		
 		if (amount != null) {
+			
+			if (amount.startsWith(".")){
+				amount = "0" + amount;
+			}
+			
 			if (amount.contains(".") && !amount.contains("/") && !amount.contains("cent"))
 			{
 				amount = amount.replaceAll("dollars", " ").replaceAll("dollar", " ");
-				//TODO: Check parse .dot
-				amount = amount.replaceAll("\\.", " and ") + "/100";
+				
+				if(IsMatch("[a-z,0-9,\\s,-]+[\\.](\\d{2})(\\s*)", amount) 
+						|| IsMatch("[a-z,0-9,\\s,-]+[\\.](\\d{1})(\\s*)", amount)){
+					
+					amount = amount.replaceAll("\\.", " dollars and ") + "/100";
+				}
 			}
 		}
-		*/
+		
 		return amount;
 	}
 	
@@ -145,6 +155,9 @@ public class CheckParser {
 						p2 = parseDollarsPart(array[1]);
 					} else {
 						p2 = parseCentsPart(array[1]);
+						if (p1 != null && p2 == null) {
+							return getInvalidAmount();
+						}
 					}
 					return Summary(p1, p2);
 				} 
@@ -275,7 +288,7 @@ public class CheckParser {
 					if ( n != null && 
 							( total == null || (total !=null && total == 0 && n == 0)) ) {
 						total = 0;
-					} else if (total < 2000 || n > 900) {
+					} else if ((total != null && total < 2000) || (n != null && n > 900)) {
 						return getInvalidAmount();
 					}
 

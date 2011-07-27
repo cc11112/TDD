@@ -349,27 +349,27 @@ public class CheckParserTest {
 	}
 	
 	@Test
-	public void shouldReturNullIfEndOfDollars() throws Exception{
-		
-	}
-	
-	/*
-	@Test
 	public void shouldTreatDotAsAnd() throws Exception{
 		assertEquals(345, parser.parseExpression("3.45").intValue());
 		assertEquals(789, parser.parseExpression("7.89 dollars").intValue());
+		assertEquals(1, parser.parseExpression(" .01 dollar ").intValue());
 		assertEquals(100, parser.parseExpression("1.00 dollar").intValue());
 		assertEquals(310, parser.parseExpression("3.10 dollar").intValue());
 		assertEquals(920, parser.parseExpression("9.20 dollar").intValue());
 		assertEquals(4700, parser.parseExpression(" fourty-seven.0 dollar ").intValue());
-		assertEquals(4700, parser.parseExpression(" fourty-seven.zero dollar ").intValue());
 	}
 	
 	@Test
 	public void shouldReturnNullIfDotCents() throws Exception{
 		assertEquals(null, parser.parseExpression("9.20 cent"));
-		assertEquals(null, parser.parseExpression("1.001 dollar").intValue());
+		assertEquals(null, parser.parseExpression("1.001 dollar"));
+		assertEquals(null, parser.parseExpression("1100.0103 "));
+		assertEquals(null, parser.parseExpression(" fourty-seven.zero dollar "));		
+		assertEquals(null, parser.parseExpression("&+ .01 dollar "));
+		assertEquals(null, parser.parseExpression("9.20/100"));
+		assertEquals(null, parser.parseExpression("ten.99/100"));
+		assertEquals(null, parser.parseExpression("ten dollar anD .20/100"));
+		
 	}
-	*/
 
 }
