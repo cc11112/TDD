@@ -40,10 +40,19 @@ public class DatastoreAdapter {
 
 	}
 
-	public void saveRow(String column, String value) {
-		Entity e = new Entity(column);
-		e.setProperty(column, value);
-		datastore.put(e);
+	public boolean saveRow(String column, String value) {
+		
+		try {
+			Entity e = new Entity(column);
+			e.setProperty(column, value);
+			//because put is not always is succeed!
+			datastore.put(e);
+			return true;
+		} catch (Exception ex) {
+			System.err.println(ex.getMessage());
+			return false;
+		}
+		
 		
 	}
 
