@@ -22,7 +22,7 @@ public class DatastoreAdapter {
 	}
 
 	//
-	public List<Map<String, Object>> runQuery(String column) {
+	public List<Map<String, Object>> runQuery(String column, int limit) {
 
 		ArrayList<Map<String, Object>> properties = new ArrayList<Map<String, Object>>();
 
@@ -31,7 +31,9 @@ public class DatastoreAdapter {
 			Query query = new Query(column);
 			PreparedQuery preQuery = datastore.prepare(query);
 			for (Entity e : preQuery.asIterable()) {
-				properties.add(e.getProperties());
+				if (properties.size() < limit){
+					properties.add(e.getProperties());
+				}
 			}
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());

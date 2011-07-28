@@ -4,3 +4,44 @@ curl -H Content-Type:application/json -d \
 
 
 
+
+echo
+echo
+echo 'limit=-1'
+echo '-------------------------------'
+curl http://cranettd.appspot.com/checkclearing?limit=-1
+
+echo
+echo
+echo 'limit=0'
+echo '-------------------------------'
+curl http://cranettd.appspot.com/checkclearing?limit=0
+
+echo
+echo
+echo 'limit=1'
+echo '-------------------------------'
+curl http://cranettd.appspot.com/checkclearing?limit=1
+
+echo
+echo
+echo 'limit=10'
+echo '-------------------------------'
+curl http://cranettd.appspot.com/checkclearing?limit=10
+
+echo
+echo
+echo 'limit=100'
+echo '-------------------------------'
+curl http://cranettd.appspot.com/checkclearing?limit=100
+
+echo
+echo
+echo 'limit=1000'
+echo '-------------------------------'
+curl http://cranettd.appspot.com/checkclearing?limit=1000
+
+echo
+echo
+echo '-------------------------------'
+curl http://cranettd.appspot.com/checkclearing

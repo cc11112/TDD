@@ -19,9 +19,12 @@ public class RequestReader {
 	private CheckParser checkParser;
 	private DatastoreAdapter dataStore;
 
-	public RequestReader(DatastoreAdapter dataStore) {
+	private Clock clock;
+
+	public RequestReader(DatastoreAdapter dataStore, Clock clock) {
 		checkParser = getCheckParser();
 		this.dataStore = dataStore;
+		this.clock = clock;
 	}
 
 	private CheckParser getCheckParser() {
@@ -32,10 +35,10 @@ public class RequestReader {
 	}
 
 	public String respond(Reader requestData) {
-
+		long startTime = clock.currentTime();
+		
 		Gson gson = new Gson();
 		
-		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
 		List<String> checks = null;
 		
 		try
@@ -47,13 +50,14 @@ public class RequestReader {
 			System.err.println(ex.getMessage());
 		}
 
+		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+		
 		if (checks != null) {
 			for (String amount : checks) {
 				
-				//don't save when upload google appengine
-				//it will cause timeout issue !!!
-				//
-				dataStore.saveRow("Checks", amount);
+				if (clock.IsOverTime(startTime)){
+					break;
+				}
 				
 				Integer parsedValue = checkParser.parseExpression(amount);
 				if (parsedValue == null) {
@@ -61,12 +65,17 @@ public class RequestReader {
 				} else {
 					map.put(amount, parsedValue);
 				}
+				
+				//don't save when upload google appengine
+				//it will cause timeout issue !!!
+				//
+				dataStore.saveRow("Checks", amount);
 			}
 		}
 
 		return new Gson().toJson(map);
 	}
-
+	
 	private String LogRequestData(String s) {
 		if (s != null) {
 			log.info(s);

@@ -371,5 +371,6 @@ public class CheckParserTest {
 		assertEquals(null, parser.parseExpression("ten dollar anD .20/100"));
 		
 	}
+	
 
 }

@@ -7,16 +7,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
+//import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.apphosting.api.ApiProxy;
+//import com.google.apphosting.api.ApiProxy;
 
-import com.google.appengine.tools.development.ApiProxyLocal;
-import com.google.appengine.tools.development.ApiProxyLocalFactory;
-import com.google.appengine.tools.development.AbstractLocalRpcService;
-import com.google.appengine.api.datastore.AsyncDatastoreService; 
+//import com.google.appengine.tools.development.ApiProxyLocal;
+//import com.google.appengine.tools.development.ApiProxyLocalFactory;
+//import com.google.appengine.tools.development.AbstractLocalRpcService;
+//import com.google.appengine.api.datastore.AsyncDatastoreService; 
 
 public class DatastoreAdapterTest {
 

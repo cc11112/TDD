@@ -17,9 +17,8 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-
+//import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+//import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 public class CheckClearingServletTest {
 	private CheckClearingServlet servlet;
@@ -28,23 +27,27 @@ public class CheckClearingServletTest {
 	private CharArrayWriter writer;
 	private BufferedReader reader;
 
-	//in order to avoid exception: 
-	//java.lang.NullPointerException: No API environment is registered for this thread.
-	//	at com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppId(DatastoreApiHelper.java:108)
-	//	at com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppIdNamespace(DatastoreApiHelper.java:118)
-	//	at com.google.appengine.api.datastore.Query.<init>(Query.java:112)
-	//	at edu.luc.clearing.DatastoreAdapter.runQuery(DatastoreAdapter.java:29)
+	// in order to avoid exception:
+	// java.lang.NullPointerException: No API environment is registered for this
+	// thread.
+	// at
+	// com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppId(DatastoreApiHelper.java:108)
+	// at
+	// com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppIdNamespace(DatastoreApiHelper.java:118)
+	// at com.google.appengine.api.datastore.Query.<init>(Query.java:112)
+	// at edu.luc.clearing.DatastoreAdapter.runQuery(DatastoreAdapter.java:29)
 	//
-	//link: http://code.google.com/appengine/docs/java/tools/localunittesting.html#Introducing_the_Java_Testing_Utilities
-	
-    //private final LocalServiceTestHelper helper =
-      //  new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+	// link:
+	// http://code.google.com/appengine/docs/java/tools/localunittesting.html#Introducing_the_Java_Testing_Utilities
+
+	// private final LocalServiceTestHelper helper =
+	// new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
 	@Before
 	public void setUp() throws IOException {
-		
-		//helper.setUp();
-		
+
+		// helper.setUp();
+
 		DatastoreAdapter store = new DatastoreAdapter();
 
 		servlet = new CheckClearingServlet(store);
@@ -59,31 +62,39 @@ public class CheckClearingServletTest {
 		when(mockResponse.getWriter()).thenReturn(new PrintWriter(writer));
 	}
 
-    @After
-    public void tearDown() {
-        //helper.tearDown();
-    }
-    
+	@After
+	public void tearDown() {
+		// helper.tearDown();
+	}
+
 	@Test
-	public void setsContentTypeForTheResponse() throws Exception{
-		
+	public void setsContentTypeForTheResponse() throws Exception {
+
 		servlet.doPost(mockRequest, mockResponse);
-		
+
 		verify(mockResponse).setContentType("application/json");
 	}
-	
+
 	@Test
-	public void writesAResponseObject() throws Exception{
-		
+	public void writesAResponseObject() throws Exception {
+
 		servlet.doPost(mockRequest, mockResponse);
 		assertThat(writer.toString(), is(equalTo("{}")));
 	}
-	
+
 	@Test
-	public void returnsCheckAmountInAJSONArray() throws Exception{
-		
-		servlet.doGet(null, mockResponse);
-		
+	public void returnsCheckAmountInAJSONArray() throws Exception {
+
+		servlet.doGet(mockRequest, mockResponse);
+
 		assertThat(writer.toString(), is(equalTo("[]")));
+	}
+
+	@Test
+	public void canLimitThenNumberOfCheckAmountReturns() throws Exception {
+		when(mockRequest.getParameter("limit")).thenReturn("1000");
+		servlet.doGet(mockRequest, mockResponse);
+
+		verify(mockRequest).getParameter("limit");
 	}
 }
