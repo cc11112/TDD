@@ -372,5 +372,60 @@ public class CheckParserTest {
 		
 	}
 	
+	@Test 
+	public void shouldHandleMultiDashConnect() throws Exception{
+		assertEquals(7917, parser.parseExpression(" SEVENTY-nine DOLLARS --- 17/100").intValue());
+		assertEquals(0, parser.parseExpression("zero --- 0/100").intValue());
+		assertEquals(100, parser.parseExpression("zero --- 100/100").intValue());
+		assertEquals(699, parser.parseExpression("six --- 99\\100").intValue());
+		assertEquals(326, parser.parseExpression("three --- 26 / 100 dollars").intValue());
+		assertEquals(100, parser.parseExpression("--- 100/100").intValue());
+		assertEquals(2996, parser.parseExpression("Twenty Nine Dollar --- 96 Cents").intValue());
+		assertEquals(200, parser.parseExpression("one --- 100/100").intValue());
+		assertEquals(250, parser.parseExpression("two --- 50 cent").intValue());
+		assertEquals(1000, parser.parseExpression("ten --- 0/100").intValue());
+		assertEquals(5612, parser.parseExpression("50 six --- 12/100 dollars").intValue());
+		assertEquals(444, parser.parseExpression("four ---44/100").intValue());
+		assertEquals(1037, parser.parseExpression("ten --- 37/100").intValue());
+		assertEquals(900, parser.parseExpression("nine --- 0/100").intValue());
+		assertEquals(1159, parser.parseExpression("eleven --- 59/100").intValue());
+		assertEquals(1861, parser.parseExpression("eighteen dollars --- 61/100").intValue());
+		assertEquals(1782, parser.parseExpression("seventeen---82/100").intValue());
+		assertEquals(9099, parser.parseExpression("ninety --- 99/100 ").intValue());
+		assertEquals(9999, parser.parseExpression("ninety nine --- 99/100  ").intValue());
+		assertEquals(7343, parser.parseExpression(" SEVENTY-THREE DOLLAR --- 43 / 100").intValue());
+		assertEquals(8000, parser.parseExpression(" SEVENTY-NINE DOLLARS --- 100 / 100").intValue());
+		assertEquals(4700, parser.parseExpression(" fourty seven dollars --- zero cents ").intValue());
+		assertEquals(6700, parser.parseExpression(" sixty seven dollars --- without cents ").intValue());
+	}
+	
+	@Test 
+	public void shouldTreatetildeAsAnd() throws Exception{
+		assertEquals(7917, parser.parseExpression(" SEVENTY-nine DOLLARS ~ 17/100").intValue());
+		assertEquals(0, parser.parseExpression("zero ~ 0/100").intValue());
+		assertEquals(100, parser.parseExpression("zero ~ 100/100").intValue());
+		assertEquals(699, parser.parseExpression("six ~ 99\\100").intValue());
+		assertEquals(326, parser.parseExpression("three ~ 26 / 100 dollars").intValue());
+		assertEquals(100, parser.parseExpression("~ 100/100").intValue());
+		assertEquals(2996, parser.parseExpression("Twenty Nine Dollar ~ 96 Cents").intValue());
+		assertEquals(200, parser.parseExpression("one ~100/100").intValue());
+		assertEquals(250, parser.parseExpression("two ~ 50 cent").intValue());
+		assertEquals(1000, parser.parseExpression("ten ~ 0/100").intValue());
+		assertEquals(5612, parser.parseExpression("50 six ~ 12/100 dollars").intValue());
+		assertEquals(444, parser.parseExpression("four ~44/100").intValue());
+		assertEquals(1037, parser.parseExpression("ten ~ 37/100").intValue());
+		assertEquals(900, parser.parseExpression("nine ~ 0/100").intValue());
+		assertEquals(1159, parser.parseExpression("eleven ~ 59/100").intValue());
+		assertEquals(1861, parser.parseExpression("eighteen dollars ~ 61/100").intValue());
+		assertEquals(1782, parser.parseExpression("seventeen~ 82/100").intValue());
+		assertEquals(9099, parser.parseExpression("ninety ~ 99/100 ").intValue());
+		assertEquals(9999, parser.parseExpression("ninety nine ~ 99/100  ").intValue());
+		assertEquals(7343, parser.parseExpression(" SEVENTY-THREE DOLLAR ~ 43 / 100").intValue());
+		assertEquals(8000, parser.parseExpression(" SEVENTY-NINE DOLLARS ~ 100 / 100").intValue());
+		assertEquals(4700, parser.parseExpression(" fourty seven dollars ~ zero cents ").intValue());
+		assertEquals(6700, parser.parseExpression(" sixty seven dollars ~ without cents ").intValue());
+	}
+	
+	
 
 }

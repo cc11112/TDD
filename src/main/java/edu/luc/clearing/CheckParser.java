@@ -102,6 +102,15 @@ public class CheckParser {
 		return amount;
 	}
 	
+	private String	ReplaceConnectString(String amount) {
+		if (amount != null) {
+			//treat tilde  ~ as a'and'
+			amount = amount.replace('\\', '/').replace('~', '+').replace('&','+').replaceAll("\\+"," and ").replaceAll("\\-\\-\\-", " and ");
+		}
+		return amount;
+	}
+	 
+	
 	public Integer parseExpression(String amount) {
 
 		try {
@@ -109,9 +118,15 @@ public class CheckParser {
 			if (amount != null) {
 
 				amount = amount.toLowerCase().trim();
-				amount = amount.replace('\\', '/').replace('&','+').replaceAll("\\+"," and ");
-
+				
+				//formual pattern
+				//connect string
+				amount = ReplaceConnectString(amount);
+				
+				//$
 				amount = ReplaceDollarSymbol(amount);
+				
+				//. and , 
 				amount = ReplaceDotSymbol(amount);
 				
 				if (IsMatch(MatchAnd, amount)) {
