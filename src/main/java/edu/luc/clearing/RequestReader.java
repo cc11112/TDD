@@ -8,14 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class RequestReader {
-	private static final Logger log = Logger.getLogger(RequestReader.class.getName());
-	
+	private static final Logger log = Logger.getLogger(RequestReader.class
+			.getName());
+
 	private CheckParser checkParser;
 	private DatastoreAdapter dataStore;
 
@@ -36,38 +35,35 @@ public class RequestReader {
 
 	public String respond(Reader requestData) {
 		long startTime = clock.currentTime();
-		
+
 		Gson gson = new Gson();
-		
+
 		List<String> checks = null;
-		
-		try
-		{
-			checks = gson.fromJson( GetPostData(requestData), requestType());
-		}
-		catch(Exception ex)
-		{
+
+		try {
+			checks = gson.fromJson(GetPostData(requestData), requestType());
+		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
 		}
 
 		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
-		
+
 		if (checks != null) {
 			for (String amount : checks) {
-				
-				if (clock.IsOverTime(startTime)){
+
+				if (clock.IsOverTime(startTime)) {
 					break;
 				}
-				
+
 				Integer parsedValue = checkParser.parseExpression(amount);
 				if (parsedValue == null) {
 					System.err.println("could not parse amount " + amount);
 				} else {
 					map.put(amount, parsedValue);
 				}
-				
-				//don't save when upload google appengine
-				//it will cause timeout issue !!!
+
+				// don't save when upload google appengine
+				// it will cause timeout issue !!!
 				//
 				dataStore.saveRow("Checks", amount);
 			}
@@ -75,7 +71,7 @@ public class RequestReader {
 
 		return new Gson().toJson(map);
 	}
-	
+
 	private String LogRequestData(String s) {
 		if (s != null) {
 			log.info(s);
