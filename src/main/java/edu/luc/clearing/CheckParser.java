@@ -46,100 +46,139 @@ public class CheckParser {
 		AMOUNTS.put("twenty", 2000);
 		AMOUNTS.put("thirty", 3000);
 		AMOUNTS.put("forty", 4000);
-		AMOUNTS.put("fourty", 4000); //support typo
+		AMOUNTS.put("fourty", 4000); // support typo
 		AMOUNTS.put("fifty", 5000);
 		AMOUNTS.put("sixty", 6000);
 		AMOUNTS.put("seventy", 7000);
 		AMOUNTS.put("eighty", 8000);
 		AMOUNTS.put("ninety", 9000);
-		AMOUNTS.put("ninty", 9000); //support typo
-		//AMOUNTS.put("one hundred", 10000);
-		
+		AMOUNTS.put("ninty", 9000); // support typo
+		// AMOUNTS.put("one hundred", 10000);
 	}
 
 	private String ReplaceDollarSymbol(String amount) {
-		if (amount != null) {
-			if (amount.startsWith("usd")){
-				amount = amount.replaceAll("usd", "");
-			}
-			
-			if (amount.startsWith("$")){
-				amount = amount.replace('$', ' ');
-				if (!amount.contains("and")){
-					amount += " dollars";
-				}
-			}
-			else if (amount.contains("$"))
-			{
-				amount = amount.replaceAll("\\$", " dollars ");
-			}
+
+		if (amount.startsWith("usd")) {
+			amount = amount.replaceAll("usd", "");
 		}
-		
+
+		if (amount.startsWith("$")) {
+			amount = amount.replace('$', ' ');
+			if (!amount.contains("and")) {
+				amount += " dollars";
+			}
+		} else if (amount.endsWith("$")){
+			amount = amount.replaceAll("\\$", "");
+		}
+		else if (amount.contains("$")) {
+			amount = amount.replaceAll("\\$", " dollars ");
+		}
+
 		return amount;
 	}
 
 	private String ReplaceDotSymbol(String amount) {
-		//TODO: Handle . expression
-		
-		if (amount != null) {
-			
-			if (amount.startsWith(".")){
-				amount = "0" + amount;
-			}
-			
-			if (amount.contains(".") && !amount.contains("/") && !amount.contains("cent"))
-			{
-				amount = amount.replaceAll("dollars", " ").replaceAll("dollar", " ");
-				
-				if(IsMatch("[a-z,0-9,\\s,-]+[\\.](\\d{2})(\\s*)", amount) 
-						|| IsMatch("[a-z,0-9,\\s,-]+[\\.](\\d{1})(\\s*)", amount)){
-					
-					amount = amount.replaceAll("\\.", " dollars and ") + "/100";
-				}
-			}
+
+		// TODO: Handle . expression
+		if (amount.startsWith(".")) {
+			amount = "0" + amount;
 		}
-		
-		return amount;
-	}
-	
-	private String	ReplaceConnectString(String amount) {
-		if (amount != null) {
-			//treat tilde  ~ as a'and'
-			amount = amount.replace('\\', '/').replace('~', '+').replace('&','+').replaceAll("\\+"," and ").replaceAll("\\-\\-\\-", " and ");
+
+		if (amount.contains(".") && !amount.contains("/")
+				&& !amount.contains("cent")) {
+			amount = amount.replaceAll("dollars", " ")
+					.replaceAll("dollar", " ");
+
+			if (IsMatch("[a-z,0-9,\\s,-]+[\\.](\\d{2})(\\s*)", amount)
+					|| IsMatch("[a-z,0-9,\\s,-]+[\\.](\\d{1})(\\s*)", amount)) {
+
+				amount = amount.replaceAll("\\.", " dollars and ") + "/100";
+			}
 		}
 		return amount;
 	}
-	 
-	
+
+	private String ReplaceCommaSymbol(String amount) {
+		if (IsMatch("([\\d]+)[,]+([\\d])+([a-z,\\s]+)", amount)) {
+			amount = amount.replaceAll(",", "");
+		} else{
+			amount = amount.replaceAll(",", " and ");
+		}
+
+		return amount;
+	}
+
+	private String ReplaceConnectString(String amount) {
+		
+		//allow treat '\' as '/'
+		amount = amount.replace('\\', '/');
+
+		// treat tilde ~ as a 'and'
+		amount = amount.replace('~', '+');
+
+		// treat  & as a 'and'
+		amount = amount.replace('&', '+');
+		
+		// treat ';' as 'and'
+		amount = amount.replace(';', '+');
+		
+		// treate ':" as and
+		amount = amount.replace(':', '+');
+		
+		// treate '|" as and
+		amount = amount.replace('|', '+');
+		
+		//this line will be the last
+		// treat '+' & as a 'and'
+		amount = amount.replaceAll("\\+", " and ");
+		
+		// treat multi '-' as "and"
+		amount = amount.replaceAll("([\\-]{2,})", " and ");
+		
+		return amount;
+	}
+
+	private String FormatAmount(String amount) {
+
+		amount = amount.toLowerCase().trim();
+		
+		// connect string
+		amount = ReplaceConnectString(amount);
+		
+		// . and
+		amount = ReplaceDotSymbol(amount);
+
+		// ,
+		amount = ReplaceCommaSymbol(amount);
+
+		// $
+		amount = ReplaceDollarSymbol(amount);
+		
+		return amount.trim();
+	}
+
 	public Integer parseExpression(String amount) {
 
 		try {
 
 			if (amount != null) {
+				// foramt pattern
+				amount = FormatAmount(amount);
 
-				amount = amount.toLowerCase().trim();
-				
-				//formual pattern
-				//connect string
-				amount = ReplaceConnectString(amount);
-				
-				//$
-				amount = ReplaceDollarSymbol(amount);
-				
-				//. and , 
-				amount = ReplaceDotSymbol(amount);
-				
 				if (IsMatch(MatchAnd, amount)) {
 					return parseAndAmount(amount);
-				} else if (IsMatch("([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,/,\\s]+)cent[s]?(\\s*)", amount)
-						|| IsMatch("([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,\\s]+)/(\\s)*100(\\s*)", amount)
-						){
+				} else if (IsMatch(
+						"([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,/,\\s]+)cent[s]?(\\s*)",
+						amount)
+						|| IsMatch(
+								"([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,\\s]+)/(\\s)*100(\\s*)",
+								amount)) {
 					return parseWithoutAmount(amount);
-				} else if (IsMatch("([a-z,0-9,\\s]+)cent[s]?(\\s*)", amount) 
-						|| IsMatch(MatchCents,amount)
-						) {
+				} else if (IsMatch("([a-z,0-9,\\s]+)cent[s]?(\\s*)", amount)
+						|| IsMatch(MatchCents, amount)) {
 					return parseCentsPart(amount);
-				} else if (IsMatch("([a-z,0-9,\\s]+)(dollars[s]?)?(\\s*)", amount)) {
+				} else if (IsMatch("([a-z,0-9,\\s]+)(dollars[s]?)?(\\s*)",
+						amount)) {
 					return parseDollarsPart(amount);
 				} else {
 					return parseAmountTwoDigits(amount);
@@ -160,7 +199,7 @@ public class CheckParser {
 			String[] array = p.split(amount);
 
 			if (array != null) {
-				if (array.length == 1){
+				if (array.length == 1) {
 					return parseDollarsPart(array[0]);
 				}
 				if (array.length == 2) {
@@ -175,13 +214,12 @@ public class CheckParser {
 						}
 					}
 					return Summary(p1, p2);
-				} 
-				else if (array.length == 3) {
+				} else if (array.length == 3) {
 					Integer p1 = parseDollarsPart(array[0]);
 					Integer p2 = parseDollarsPart(array[1]);
-					//cents
+					// cents
 					Integer p3 = parseCentsPart(array[2]);
-					if (p1 != null && p2 != null && p3 != null){
+					if (p1 != null && p2 != null && p3 != null) {
 						return Summary(Summary(p1, p2), p3);
 					}
 				}
@@ -193,19 +231,17 @@ public class CheckParser {
 		return getInvalidAmount();
 	}
 
-	private Integer parseWithoutAmount(String amount){
+	private Integer parseWithoutAmount(String amount) {
 		Pattern p = getPattern("dollars[s]?");
 		String[] array = p.split(amount);
-		if (array != null && array.length == 2)
-		{
+		if (array != null && array.length == 2) {
 			Integer p1 = parseDollarsPart(array[0]);
 			Integer p2 = parseCentsPart(array[1]);
-			return  Summary(p1, p2);
+			return Summary(p1, p2);
 		}
 		return getInvalidAmount();
 	}
-	
-	
+
 	private Integer parseAmount(String amount) {
 		return AMOUNTS.get(amount);
 	}
@@ -235,16 +271,16 @@ public class CheckParser {
 
 		return result;
 	}
-	
+
 	private String RemoveDollars(String amount) {
 		if (amount != null) {
 			return amount.replaceAll(Dollars, "").replaceAll("-", " ");
 		}
 		return amount;
 	}
-	
-	private Boolean IsNumberic(String amount){
-		if (amount != null){
+
+	private Boolean IsNumberic(String amount) {
+		if (amount != null) {
 			return IsMatch("[\\d,\\s]+(\\s)*", amount);
 		}
 		return false;
@@ -252,7 +288,7 @@ public class CheckParser {
 
 	private Integer parseDollarsPart(String amount) {
 
-		// 
+		//
 		// support one, two, ten, twenty nine,
 		// three dollars, 13 dollars, ninety-nine
 		// sixty 6 dollars 5/100 dollars
@@ -274,7 +310,7 @@ public class CheckParser {
 	}
 
 	private Integer parseAmountTwoDigits(String amount) {
-		
+
 		amount = RemoveDollars(amount);
 
 		Pattern p = getPattern("\\s+");
@@ -283,27 +319,28 @@ public class CheckParser {
 		if (array != null && array.length > 0) {
 			Integer total = null;
 			for (String s : array) {
-				if (s == null || "".equals(s.trim())){
+				if (s == null || "".equals(s.trim())) {
 					continue;
 				}
-				Integer n ;
+				Integer n;
 
 				if (IsNumberic(s)) {
 					n = tryParseNumber(s);
-					if (n != null){
+					if (n != null) {
 						n *= 100;
 					}
 				} else {
 					n = parseAmount(s);
 				}
-						
+
 				if (n == null && total != null) {
 					return getInvalidAmount();
 				} else {
-					if ( n != null && 
-							( total == null || (total !=null && total == 0 && n == 0)) ) {
+					if (n != null
+							&& (total == null || (total != null && total == 0 && n == 0))) {
 						total = 0;
-					} else if ((total != null && total < 2000) || (n != null && n > 900)) {
+					} else if ((total != null && total < 2000)
+							|| (n != null && n > 900)) {
 						return getInvalidAmount();
 					}
 
@@ -323,7 +360,7 @@ public class CheckParser {
 
 		amount = amount.replaceAll(Cents, "");
 
-		// 
+		//
 		// support these types: 75, 12/100, ten, eighty five /100, nine / one
 		// hundred
 		// 0/100 0,
@@ -341,15 +378,13 @@ public class CheckParser {
 				Integer cents = parseNumber(RemoveDollars(array[0]));
 
 				if (cents != null) {
-					if (cents < 0){
+					if (cents < 0) {
 						return getInvalidAmount();
-					}
-					else
-					{
+					} else {
 						cents /= 100; // it is cents
 					}
 				}
-				
+
 				return cents;
 			}
 		}
@@ -361,7 +396,7 @@ public class CheckParser {
 	private Integer parseNumber(String amount) {
 
 		Pattern p = getPattern("\\s+");
-		
+
 		String[] array = p.split(amount);
 
 		if (array != null) {
@@ -384,7 +419,7 @@ public class CheckParser {
 					}
 				}
 			}
-			
+
 			return total;
 
 		}
@@ -411,11 +446,9 @@ public class CheckParser {
 	}
 
 	private boolean IsMatch(String regex, String amount) {
-		if (amount != null && amount.contains(regex)){ 
+		if (amount != null && amount.contains(regex)) {
 			return true;
-		}
-		else
-			{
+		} else {
 			Pattern p = getPattern(regex);
 			Matcher m = p.matcher(amount);
 			return m.matches();

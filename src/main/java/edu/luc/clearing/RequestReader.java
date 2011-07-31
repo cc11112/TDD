@@ -65,7 +65,7 @@ public class RequestReader {
 				// don't save when upload google appengine
 				// it will cause timeout issue !!!
 				//
-				//dataStore.saveRow("Checks", amount);
+				dataStore.saveRow("Checks", amount);
 			}
 		}
 
