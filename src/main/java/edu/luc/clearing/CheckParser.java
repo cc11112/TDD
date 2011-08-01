@@ -110,6 +110,9 @@ public class CheckParser {
 
 	private String ReplaceConnectString(String amount) {
 		
+		//remove '*' 
+		amount = amount.replace('*', ' ').trim();
+		
 		//allow treat '\' as '/'
 		amount = amount.replace('\\', '/');
 
@@ -135,7 +138,7 @@ public class CheckParser {
 		// treat multi '-' as "and"
 		amount = amount.replaceAll("([\\-]{2,})", " and ");
 		
-		return amount;
+		return amount.trim();
 	}
 
 	private String FormatAmount(String amount) {

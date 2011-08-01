@@ -20,6 +20,7 @@ public class CheckParserTest {
 		assertEquals(300, parser.parseExpression("Three").intValue());
 		assertEquals(1000, parser.parseExpression("TEN").intValue());
 		assertEquals(5000, parser.parseExpression("fifty").intValue());
+		assertEquals(9000, parser.parseExpression("*** ninETY ***").intValue());
 		assertEquals(1000, parser.parseExpression("10").intValue());
 		assertEquals(9900, parser.parseExpression("99").intValue());
 		assertEquals(8700, parser.parseExpression("8 7 dollars").intValue());
@@ -101,7 +102,6 @@ public class CheckParserTest {
 		assertEquals(null, parser.parseExpression("---"));
 		assertEquals(null, parser.parseExpression("/"));
 		assertEquals(null, parser.parseExpression("\\"));
-		assertEquals(null, parser.parseExpression("1*7 dollars"));
 		assertEquals(null, parser.parseExpression("1/9 dollars"));
 	}
 	
@@ -519,5 +519,34 @@ public class CheckParserTest {
 		assertEquals(9455, parser.parseExpression("94 Dollar | 55 Cent").intValue());
 		assertEquals(8785, parser.parseExpression("87 dollar | eighty five cents").intValue());
 		assertEquals(7658, parser.parseExpression(" 76 Dollar | Fifty Eight Cents ").intValue());
+	}
+	
+	@Test
+	public void shouldHandleStarSymbol()  throws Exception{
+		assertEquals(7317, parser.parseExpression(" ** SEVENTY-THREE DOLLARS and 17/100 *").intValue());
+		assertEquals(0, parser.parseExpression("*** zero and 0/100 **").intValue());
+		assertEquals(100, parser.parseExpression("*zero and 100/100****").intValue());
+		assertEquals(699, parser.parseExpression("*****six*and*99\\100******").intValue());
+		assertEquals(326, parser.parseExpression("*three**and*26**/**100**dollars****").intValue());
+		assertEquals(100, parser.parseExpression("*$100/100*").intValue());
+		assertEquals(100, parser.parseExpression("*100/100 dollars*").intValue());
+		assertEquals(199, parser.parseExpression("*one and 99/100 dollar** ").intValue());
+		assertEquals(200, parser.parseExpression("*one and *100/100").intValue());
+		assertEquals(250, parser.parseExpression("*two **and *50/100").intValue());
+		assertEquals(284, parser.parseExpression("*2 And **84 Cents").intValue());
+		assertEquals(400, parser.parseExpression("*4** and** 0/100").intValue());
+		assertEquals(5612, parser.parseExpression("*50** six** and** 12/100").intValue());
+		assertEquals(444, parser.parseExpression("**four** and44/100").intValue());
+		assertEquals(1037, parser.parseExpression("***ten **and 37/100").intValue());
+		assertEquals(900, parser.parseExpression("***nine** and** 0/100").intValue());
+		assertEquals(1159, parser.parseExpression("***eleven*** and*** 59/100").intValue());
+		assertEquals(1861, parser.parseExpression("***eighteen*** dollars** and** 61/100").intValue());
+		assertEquals(1782, parser.parseExpression("seventeenand82/100").intValue());
+		assertEquals(9099, parser.parseExpression("ninety and 99/100").intValue());
+		assertEquals(9999, parser.parseExpression("ninety nine anD 99/100").intValue());
+		assertEquals(7343, parser.parseExpression(" SEVENTY-THREE DOLLAR AND 43 / 100").intValue());
+		assertEquals(8000, parser.parseExpression(" SEVENTY-NINE DOLLARS AND 100 / 100").intValue());
+		assertEquals(4700, parser.parseExpression(" fourty seven dollars And zero cents ").intValue());
+		assertEquals(4700, parser.parseExpression(" fourty seven dollars aNd without cents ").intValue());
 	}
 }
