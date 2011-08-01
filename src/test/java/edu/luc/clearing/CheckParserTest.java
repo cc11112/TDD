@@ -92,14 +92,15 @@ public class CheckParserTest {
 		assertEquals(9911001, parser.parseExpression("ninety nine thousAND and one hundred and ten and one cents").intValue());
 		assertEquals(9901312, parser.parseExpression("ninety nine thousAND thirteen and 12/100").intValue());
 		assertEquals(9901399, parser.parseExpression("ninety nine thousAND thirteen dollar 99/100").intValue());
-		
-		//assertEquals(99013, parser.parseExpression("ninety nine thousAND thirteen cents").intValue());
+		assertEquals(99013, parser.parseExpression("ninety nine thousAND thirteen cents").intValue());
 	}
 	
 	@Test
 	public void shouldHandleContainMillion() throws Exception{
 		assertEquals(100000000, parser.parseExpression("one Millions dollar").intValue());
 		assertEquals(900000000, parser.parseExpression("nine Million dollar").intValue());
+	//	assertEquals(8900000, parser.parseExpression("89 Million").intValue());
+		
 	}
 	
 	@Test

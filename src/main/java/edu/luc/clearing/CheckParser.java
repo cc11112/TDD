@@ -13,54 +13,54 @@ public class CheckParser {
 	private static final String Cents = "cent[s]?";
 	private static final String MatchAnd = "and";
 
-	private static final Map<String, Integer> AMOUNTS = new HashMap<String, Integer>();
+	private static final Map<String, Long> AMOUNTS = new HashMap<String, Long>();
 
 	public CheckParser() {
-		AMOUNTS.put("without", 0);
-		AMOUNTS.put("no", 0);
-		AMOUNTS.put("na", 0);
-		AMOUNTS.put("n/a", 0);
-		AMOUNTS.put("zero", 0);
+		AMOUNTS.put("without", 0L);
+		AMOUNTS.put("no", 0L);
+		AMOUNTS.put("na", 0L);
+		AMOUNTS.put("n/a", 0L);
+		AMOUNTS.put("zero", 0L);
 		// AMOUNTS.put("penny", 1);
 		// AMOUNTS.put("nickel", 5);
 		// AMOUNTS.put("dime", 10);
 		// AMOUNTS.put("quarter", 25);
-		AMOUNTS.put("one", 100);
-		AMOUNTS.put("two", 200);
-		AMOUNTS.put("three", 300);
-		AMOUNTS.put("four", 400);
-		AMOUNTS.put("five", 500);
-		AMOUNTS.put("six", 600);
-		AMOUNTS.put("seven", 700);
-		AMOUNTS.put("eight", 800);
-		AMOUNTS.put("nine", 900);
-		AMOUNTS.put("ten", 1000);
-		AMOUNTS.put("eleven", 1100);
-		AMOUNTS.put("twelve", 1200);
-		AMOUNTS.put("thirteen", 1300);
-		AMOUNTS.put("fourteen", 1400);
-		AMOUNTS.put("fifteen", 1500);
-		AMOUNTS.put("sixteen", 1600);
-		AMOUNTS.put("seventeen", 1700);
-		AMOUNTS.put("eighteen", 1800);
-		AMOUNTS.put("nineteen", 1900);
-		AMOUNTS.put("twenty", 2000);
-		AMOUNTS.put("thirty", 3000);
-		AMOUNTS.put("forty", 4000);
-		AMOUNTS.put("fourty", 4000); // support typo
-		AMOUNTS.put("fifty", 5000);
-		AMOUNTS.put("sixty", 6000);
-		AMOUNTS.put("seventy", 7000);
-		AMOUNTS.put("eighty", 8000);
-		AMOUNTS.put("ninety", 9000);
-		AMOUNTS.put("ninty", 9000); // support typo
-		AMOUNTS.put("hundred", 10000);
-		AMOUNTS.put("hundreds", 10000);
-		AMOUNTS.put("thousand", 100000);
-		AMOUNTS.put("thousands", 100000);
-		AMOUNTS.put("k", 100000);
-		AMOUNTS.put("million", 100000000);
-		AMOUNTS.put("millions", 100000000);
+		AMOUNTS.put("one", 100L);
+		AMOUNTS.put("two", 200L);
+		AMOUNTS.put("three", 300L);
+		AMOUNTS.put("four", 400L);
+		AMOUNTS.put("five", 500L);
+		AMOUNTS.put("six", 600L);
+		AMOUNTS.put("seven", 700L);
+		AMOUNTS.put("eight", 800L);
+		AMOUNTS.put("nine", 900L);
+		AMOUNTS.put("ten", 1000L);
+		AMOUNTS.put("eleven", 1100L);
+		AMOUNTS.put("twelve", 1200L);
+		AMOUNTS.put("thirteen", 1300L);
+		AMOUNTS.put("fourteen", 1400L);
+		AMOUNTS.put("fifteen", 1500L);
+		AMOUNTS.put("sixteen", 1600L);
+		AMOUNTS.put("seventeen", 1700L);
+		AMOUNTS.put("eighteen", 1800L);
+		AMOUNTS.put("nineteen", 1900L);
+		AMOUNTS.put("twenty", 2000L);
+		AMOUNTS.put("thirty", 3000L);
+		AMOUNTS.put("forty", 4000L);
+		AMOUNTS.put("fourty", 4000L); // support typo
+		AMOUNTS.put("fifty", 5000L);
+		AMOUNTS.put("sixty", 6000L);
+		AMOUNTS.put("seventy", 7000L);
+		AMOUNTS.put("eighty", 8000L);
+		AMOUNTS.put("ninety", 9000L);
+		AMOUNTS.put("ninty", 9000L); // support typo
+		AMOUNTS.put("hundred", 10000L);
+		AMOUNTS.put("hundreds", 10000L);
+		AMOUNTS.put("thousand", 100000L);
+		AMOUNTS.put("thousands", 100000L);
+		AMOUNTS.put("k", 100000L);
+		AMOUNTS.put("million", 100000000L);
+		AMOUNTS.put("millions", 100000000L);
 	}
 
 	private String ReplaceDollarSymbol(String amount) {
@@ -184,7 +184,7 @@ public class CheckParser {
 		return amount.trim();
 	}
 
-	public Integer parseExpression(String amount) {
+	public Long parseExpression(String amount) {
 
 		try {
 
@@ -209,7 +209,7 @@ public class CheckParser {
 		return getInvalidAmount();
 	}
 
-	private Integer parseAndAmount(String amount) {
+	private Long parseAndAmount(String amount) {
 
 		try {
 			Pattern p = getPattern(MatchAnd);
@@ -217,14 +217,14 @@ public class CheckParser {
 
 			if (array != null && array.length > 0) {
 				
-				Integer p1 = ("".equals(array[0].trim())) ? 0
+				Long p1 = ("".equals(array[0].trim())) ? 0
 						: parseDollarsPart(array[0]);
 				
 				boolean lastPosition = array[0].contains("dollar") || p1< 10000;
 				
 				for(int i=1; i<array.length; ++i){
 					
-					Integer p2 = null;
+					Long p2 = null;
 					
 					String s = array[i].trim();
 					
@@ -262,11 +262,11 @@ public class CheckParser {
 		return getInvalidAmount();
 	}
 
-	private Integer parseAmount(String amount) {
+	private Long parseAmount(String amount) {
 		return AMOUNTS.get(amount);
 	}
 
-	private Integer getInvalidAmount() {
+	private Long getInvalidAmount() {
 		return null;
 	}
 
@@ -296,14 +296,14 @@ public class CheckParser {
 		return false;
 	}
 
-	private Integer tryParseNumber(String string) {
+	private Long tryParseNumber(String string) {
 
 		String s = RemoveSpace(string);
 
-		Integer result = null;
+		Long result = null;
 
 		try {
-			result = Integer.parseInt(s);
+			result = Long.parseLong(s);
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
 		}
@@ -311,7 +311,7 @@ public class CheckParser {
 		return result;
 	}
 
-	private Integer parseDollarsPart(String amount) {
+	private Long parseDollarsPart(String amount) {
 
 		//
 		// support one, two, ten, twenty nine,
@@ -323,7 +323,7 @@ public class CheckParser {
 			return parseCentsPart(amount);
 		} else if (IsNumberic(amount)) {
 			// parse digits
-			Integer result = tryParseNumber(amount);
+			Long result = tryParseNumber(amount);
 			if (result != null) {
 				return result * 100;
 			}
@@ -336,9 +336,9 @@ public class CheckParser {
 	}
 
 	// TODO: parse million
-	private Integer tryParseNumberWithWord(String amount, Integer multiple) {
+	private Long tryParseNumberWithWord(String amount, Long multiple) {
 
-		Integer n = getInvalidAmount();
+		Long n = getInvalidAmount();
 
 		if (amount != null) {
 			amount = amount.trim();
@@ -360,68 +360,67 @@ public class CheckParser {
 		return n;
 	}
 
-	private Integer parseAmountInwords(String amount) {
+	private Long parseAmountInwords(String amount) {
 		amount = RemoveDollars(amount);
 
 		if ("".equals(amount.trim())) {
 			return getInvalidAmount();
 		}
 
-		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+		LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
 		map.put("million", getInvalidAmount()); // million
 		map.put("k", getInvalidAmount()); // thousand
 		map.put("hundred", getInvalidAmount());
 		map.put("dollars", getInvalidAmount());
 		map.put("cents", getInvalidAmount());
 
-		Integer lastValue = null;
+		Long lastValue = null;
 		
 		Pattern p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?million(s)?");
 		Matcher m = p.matcher(amount);
 		if (m.find()) {
-			lastValue = tryParseNumberWithWord(m.group(1), 1000000);
+			lastValue = tryParseNumberWithWord(m.group(1), 1000000L);
 			map.put("million", lastValue);
-			amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?million(s)?",
-					"");
+			amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?million(s)?", "");
 		}
 
 		if ("".equals(amount.trim())) {
-			map.put("k", 0);
+			map.put("k", 0L);
 		} else {
 			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?k");
 			m = p.matcher(amount);
 			if (m.find()) {
-				lastValue = tryParseNumberWithWord(m.group(1), 1000);
+				lastValue = tryParseNumberWithWord(m.group(1), 1000L);
 				map.put("k", lastValue);
 				amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?k", "");
 			} else if (lastValue != null) {
-				map.put("k", 0);
+				map.put("k", 0L);
 			}
 		}
 
 		if ("".equals(amount.trim())) {
-			map.put("hundred", 0);
+			map.put("hundred", 0L);
 		} else {
 			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?hundred");
 			m = p.matcher(amount);
 			if (m.find()) {
-				lastValue = tryParseNumberWithWord(m.group(1), 100);
+				lastValue = tryParseNumberWithWord(m.group(1), 100L);
 				map.put("hundred", lastValue);
 				amount = amount.replaceAll(
 						"([a-z,0-9,\\-,\\s]+)\\s?hundred(s)?", "");
 			}
 			else if (lastValue !=null){
-				map.put("hundred", 0);
+				map.put("hundred", 0L);
 			}
 		}
 
 		if ("".equals(amount.trim())) {
-			map.put("dollars", 0);
+			map.put("dollars", 0L);
 		} else {
 			if (IsMatch("([a-z,0-9,\\-,\\s]+)dollar", amount)
 					|| IsMatch("([a-z,0-9,\\-,\\s]+)(and)", amount)
 					|| (!amount.contains("cent") && !amount.contains("/"))) {
-				Integer n = parseAmountTwoDigits(amount);
+				Long n = parseAmountTwoDigits(amount);
 				map.put("dollars", n);
 
 				amount = amount
@@ -437,16 +436,16 @@ public class CheckParser {
 		}
 
 		if ("".equals(amount.trim())) {
-			map.put("cents", 0);
+			map.put("cents", 0L);
 		} else if (amount.contains("cent") || IsMatch(MatchCents, amount)) {
 			map.put("cents", parseCentsPart(amount));
 		}
 
-		Integer total = getInvalidAmount();
-		for (Map.Entry<String, Integer> pair : map.entrySet()) {
-			Integer n = pair.getValue();
+		Long total = getInvalidAmount();
+		for (Map.Entry<String, Long> pair : map.entrySet()) {
+			Long n = pair.getValue();
 			if (n != null && total == null) {
-				total = 0;
+				total = 0L;
 			}
 
 			if (n != null && total != null) {
@@ -462,8 +461,8 @@ public class CheckParser {
 
 	}
 
-	// obsolete
-	private Integer parseAmountTwoDigits(String amount) {
+ 
+	private Long parseAmountTwoDigits(String amount) {
 
 		amount = RemoveDollars(amount);
 
@@ -473,12 +472,12 @@ public class CheckParser {
 		String[] array = p.split(amount);
 
 		if (array != null && array.length > 0) {
-			Integer total = null;
+			Long total = null;
 			for (String s : array) {
 				if (s == null || "".equals(s.trim())) {
 					continue;
 				}
-				Integer n;
+				Long n;
 
 				if (IsNumberic(s)) {
 					n = tryParseNumber(s);
@@ -494,7 +493,7 @@ public class CheckParser {
 				} else {
 					if (n != null
 							&& (total == null || (total != null && total == 0 && n == 0))) {
-						total = 0;
+						total = 0L;
 					} else if ((total != null && total < 2000)
 							|| (n != null && n > 900)) {
 						return getInvalidAmount();
@@ -512,7 +511,7 @@ public class CheckParser {
 		}
 	}
 
-	private Integer parseCentsPart(String amount) {
+	private Long parseCentsPart(String amount) {
 
 		//if (amount.contains("cent") && IsFound("/(\\s)*100", amount)) {
 		//	return getInvalidAmount();
@@ -531,7 +530,7 @@ public class CheckParser {
 				return tryParseNumber(array[0]);
 			} else {
 
-				Integer cents = parseNumberInWords(RemoveDollars(array[0]));
+				Long cents = parseNumberInWords(RemoveDollars(array[0]));
 
 				if (cents != null) {
 					if (cents < 0) {
@@ -556,9 +555,9 @@ public class CheckParser {
 		return amount;
 	}
 
-	private Integer parseNumberInWords(String amount) {
+	private Long parseNumberInWords(String amount) {
 
-		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+		LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
 		map.put("million", getInvalidAmount()); // million
 		map.put("k", getInvalidAmount()); // thousand
 		map.put("hundred", getInvalidAmount());
@@ -567,45 +566,49 @@ public class CheckParser {
 		Pattern p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?million(s)?");
 		Matcher m = p.matcher(amount);
 		if (m.find()) {
-			map.put("million", tryParseNumberWithWord(m.group(1), 1000000));
+			map.put("million", tryParseNumberWithWord(m.group(1), 1000000L));
 			amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?million(s)?",
 					"");
 		}
 
 		if ("".equals(amount.trim())) {
-			map.put("k", 0);
+			map.put("k", 0L);
 		} else {
 			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?k");
 			m = p.matcher(amount);
 			if (m.find()) {
-				map.put("k", tryParseNumberWithWord(m.group(1), 1000));
+				map.put("k", tryParseNumberWithWord(m.group(1), 1000L));
 				amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?k", "");
+			}else{
+				map.put("k", 0L);
 			}
 		}
 
 		if ("".equals(amount.trim())) {
-			map.put("hundred", 0);
+			map.put("hundred", 0L);
 		} else {
 			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?hundred");
 			m = p.matcher(amount);
 			if (m.find()) {
-				map.put("hundred", tryParseNumberWithWord(m.group(1), 100));
+				map.put("hundred", tryParseNumberWithWord(m.group(1), 100L));
 				amount = amount.replaceAll(
 						"([a-z,0-9,\\-,\\s]+)\\s?hundred(s)?", "");
+			}else{
+				map.put("hundred", 0L);
 			}
 		}
 
 		if ("".equals(amount.trim())) {
-			map.put("dollars", 0);
+			map.put("dollars", 0L);
 		} else {
 			map.put("dollars", parseAmountTwoDigits(amount));
 		}
 
-		Integer total = getInvalidAmount();
-		for (Map.Entry<String, Integer> pair : map.entrySet()) {
-			Integer n = pair.getValue();
+		Long total = getInvalidAmount();
+		for (Map.Entry<String, Long> pair : map.entrySet()) {
+			Long n = pair.getValue();
 			if (n != null && total == null) {
-				total = 0;
+				total = 0L;
 			}
 
 			if (n != null && total != null) {
@@ -620,7 +623,7 @@ public class CheckParser {
 		return total;
 	}
 
-	private Integer Summary(Integer p1, Integer p2) {
+	private Long Summary(Long p1, Long p2) {
 		if (p1 != null && p2 != null) {
 			return p1 + p2;
 		} else if (p1 == null && p2 != null) {

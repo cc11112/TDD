@@ -47,7 +47,7 @@ public class RequestReader {
 			System.err.println(ex.getMessage());
 		}
 
-		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+		LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
 
 		if (checks != null) {
 			for (String amount : checks) {
@@ -56,7 +56,7 @@ public class RequestReader {
 					break;
 				}
 
-				Integer parsedValue = checkParser.parseExpression(amount);
+				Long parsedValue = checkParser.parseExpression(amount);
 				if (parsedValue == null) {
 					System.err.println("could not parse amount " + amount);
 				} else {
@@ -115,12 +115,12 @@ public class RequestReader {
 	}
 
 	private Type postType(){
-		return new TypeToken<Map<String,Integer>>(){}.getType();
+		return new TypeToken<Map<String,Long>>(){}.getType();
 	}
 	
 	public String handle(Reader requestData) {
 		
-		Map<String, Integer> checks = null;
+		Map<String, Long> checks = null;
 
 		try {
 			
@@ -136,7 +136,7 @@ public class RequestReader {
 		if (checks != null) {
 			count = checks.size();
 			
-			for (Map.Entry<String, Integer> pairs : checks.entrySet()) {
+			for (Map.Entry<String, Long> pairs : checks.entrySet()) {
 				dataStore.saveRow("RejectChecks", 
 						pairs.getKey() + " = " + pairs.getValue().toString());
 			}
