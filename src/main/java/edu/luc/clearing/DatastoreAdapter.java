@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.appengine.api.datastore.DatastoreFailureException;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -13,6 +13,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.FetchOptions;
 
 /*
+import com.google.appengine.api.datastore.DatastoreFailureException;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
@@ -31,22 +32,21 @@ public class DatastoreAdapter {
 	}
 
 	public DatastoreAdapter(DatastoreService datastore) {
-		
+		this.datastore = datastore;
+	/*
 		try {
 			
-			this.datastore = datastore;
+			Queue queue = QueueFactory.getDefaultQueue();
 			
-			//Queue queue = QueueFactory.getDefaultQueue();
-			
-		    //Transaction txn = datastore.beginTransaction();
+		    Transaction txn = datastore.beginTransaction();
 
-		    //queue.add(withUrl("/checkclearing?limit=1").method(Method.GET));
+		    queue.add(withUrl("/checkclearing?limit=1").method(Method.GET));
 
-		    //txn.commit();
+		    txn.commit();
 		} catch (DatastoreFailureException e) {
 			System.err.print(e.getMessage());
 		}
-		
+		*/
 	}
 
 	//

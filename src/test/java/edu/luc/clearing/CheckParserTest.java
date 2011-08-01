@@ -97,10 +97,13 @@ public class CheckParserTest {
 	
 	@Test
 	public void shouldHandleContainMillion() throws Exception{
-		assertEquals(100000000, parser.parseExpression("one Millions dollar").intValue());
-		assertEquals(900000000, parser.parseExpression("nine Million dollar").intValue());
-	//	assertEquals(8900000, parser.parseExpression("89 Million").intValue());
-		
+		assertEquals(100000000L, parser.parseExpression("one Millions dollar").longValue());
+		assertEquals(900000000L, parser.parseExpression("nine Million dollar").longValue());
+		assertEquals(8900000000L, parser.parseExpression("89 Million").longValue());
+		assertEquals(100000000100L, parser.parseExpression("1000 Million and one dollar").longValue());
+		assertEquals(10000000100L, parser.parseExpression("one hundred Million and one dollar").longValue());
+		assertEquals(10000000101L, parser.parseExpression("one hundred Million and one dollar and 1/100").longValue());
+		assertEquals(10000000200L, parser.parseExpression("one hundred Million and one dollar and 100/100").longValue());
 	}
 	
 	@Test
