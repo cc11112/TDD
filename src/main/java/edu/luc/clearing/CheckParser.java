@@ -181,7 +181,27 @@ public class CheckParser {
 		// $
 		amount = ReplaceDollarSymbol(amount);
 
+		amount = FilterOutUnnecessaryAnd(amount);
+		
 		return amount.trim();
+	}
+
+	private String FilterOutUnnecessaryAnd(String amount) {
+		//TODO: Filter out unnecessary and
+		//filter out "and" before million
+		//filter out "and" before thousand
+		Pattern p = getPattern("million");
+		Matcher m = p.matcher(amount);
+		if (m.find()){
+			String[] array = p.split(amount);
+			if (array.length > 0){
+				array[0] = array[0].replaceAll("and", " ") + " million";
+				
+			}
+			amount = Join(array);
+		}
+		
+		return amount;
 	}
 
 	public Long parseExpression(String amount) {
@@ -212,6 +232,7 @@ public class CheckParser {
 	private Long parseAndAmount(String amount) {
 
 		try {
+
 			Pattern p = getPattern(MatchAnd);
 			String[] array = p.split(amount);
 
@@ -650,6 +671,17 @@ public class CheckParser {
 			return m.matches();
 		}
 	}
+	
+	private String Join(String[] array) {
+        
+		StringBuffer buffer = new StringBuffer();
+        
+		for(String s : array){
+            buffer.append(s);
+        }
+		
+        return buffer.toString();
+    }
 /*
 	private boolean IsFound(String regex, String amount) {
 		if (amount != null && amount.contains(regex)) {

@@ -70,7 +70,9 @@ public class RequestReader {
 			}
 		}
 
-		return new Gson().toJson(map);
+		//if we want to display "&" rather than "\u0026"
+		//return new GsonBuilder().disableHtmlEscaping().create().toString(map);
+		return gson.toJson(map);
 	}
 
 	private String LogRequestData(String s) {

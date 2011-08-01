@@ -104,6 +104,10 @@ public class CheckParserTest {
 		assertEquals(10000000100L, parser.parseExpression("one hundred Million and one dollar").longValue());
 		assertEquals(10000000101L, parser.parseExpression("one hundred Million and one dollar and 1/100").longValue());
 		assertEquals(10000000200L, parser.parseExpression("one hundred Million and one dollar and 100/100").longValue());
+		assertEquals(100000000000L, parser.parseExpression("one thousand Million").longValue());
+		assertEquals(1000000000000L, parser.parseExpression("ten thousand Million").longValue());
+		assertEquals(1080000000000L, parser.parseExpression("ten thousand and eight hundred Million").longValue());
+		assertEquals(1000900000000L, parser.parseExpression("ten thousand nine Million").longValue());
 	}
 	
 	@Test
