@@ -335,10 +335,7 @@ public class CheckParser {
 		return getInvalidAmount();
 	}
 
-	// todo: parse hunderd
-	// todo: parse thoursand
-	// todo: parse million
-
+	// TODO: parse million
 	private Integer tryParseNumberWithWord(String amount, Integer multiple) {
 
 		Integer n = getInvalidAmount();
@@ -352,7 +349,7 @@ public class CheckParser {
 					n *= 100;
 				}
 			} else {
-				n = parseAmountTwoDigits(amount);
+				n = parseNumberInWords(amount);
 			}
 
 			if (n != null) {
@@ -525,12 +522,6 @@ public class CheckParser {
 
 		amount = RemoveMiddleSpaceInNumber(amount);
 
-		//
-		// support these types: 75, 12/100, ten, eighty five /100, nine / one
-		// hundred
-		// 0/100 0,
-		// 3/100 dollars
-		// 7/100 dollar
 		Pattern p = getPattern("/");
 
 		String[] array = p.split(amount);
@@ -656,7 +647,7 @@ public class CheckParser {
 			return m.matches();
 		}
 	}
-
+/*
 	private boolean IsFound(String regex, String amount) {
 		if (amount != null && amount.contains(regex)) {
 			return true;
@@ -666,4 +657,5 @@ public class CheckParser {
 			return m.find();
 		}
 	}
+*/	
 }
