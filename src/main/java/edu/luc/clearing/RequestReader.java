@@ -66,7 +66,7 @@ public class RequestReader {
 				// don't save when upload google appengine
 				// it will cause timeout issue !!!
 				//
-				//dataStore.saveRow("Checks", amount);
+				dataStore.saveRow("Checks", amount);
 			}
 		}
 
@@ -134,10 +134,11 @@ public class RequestReader {
 
 		Integer count = 0;
 		if (checks != null) {
+			count = checks.size();
+			
 			for (Map.Entry<String, Integer> pairs : checks.entrySet()) {
-				dataStore.saveRow("RejectChecks", pairs.getKey() + " = "
-						+ pairs.getValue().toString());
-				++count;
+				dataStore.saveRow("RejectChecks", 
+						pairs.getKey() + " = " + pairs.getValue().toString());
 			}
 		}
 

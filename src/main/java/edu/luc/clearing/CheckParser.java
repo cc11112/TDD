@@ -1,6 +1,7 @@
 package edu.luc.clearing;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,12 +80,20 @@ public class CheckParser {
 			amount = amount.replaceAll("\\$", " dollars ");
 		}
 
+		amount = amount.trim();
+
+		if (!amount.endsWith("dollars") && !amount.endsWith("dollar")) {
+			if (!amount.contains("and") && amount.contains("dollar")) {
+				amount = amount.replaceAll("dollars", "dollar").replaceAll(
+						"dollar", "dollar and");
+			}
+		}
+
 		return amount;
 	}
 
 	private String ReplaceDotSymbol(String amount) {
 
-		// TODO: Handle . expression
 		if (amount.startsWith(".")) {
 			amount = "0" + amount;
 		}
@@ -104,7 +113,9 @@ public class CheckParser {
 	}
 
 	private String ReplaceCommaSymbol(String amount) {
-		if (IsMatch("([\\d]+)[,]+([\\d])+([a-z,\\s]+)?", amount)) {
+		if (IsMatch("([\\d,\\,]+)[,]+([\\d])+([a-z,.,/,\\s]+)?", amount)
+				|| IsMatch(MatchAnd, amount)
+				|| IsMatch("([0-9,\\,]+/(\\s)*100)", amount)) {
 			amount = amount.replaceAll(",", "");
 		} else {
 			amount = amount.replaceAll(",", " and ");
@@ -130,7 +141,7 @@ public class CheckParser {
 		// treat ';' as 'and'
 		amount = amount.replace(';', '+');
 
-		// treate ':" as and
+		// treat ':" as and
 		amount = amount.replace(':', '+');
 
 		// treate '|" as and
@@ -146,17 +157,18 @@ public class CheckParser {
 		return amount.trim();
 	}
 
-	private String ReplaceThoutsandString(String amount) {
-		return amount.replaceAll("thousands", " k ").replaceAll("thousand", "k");
+	private String ReplaceThousandString(String amount) {
+		return amount.replaceAll("thousands", " k ")
+				.replaceAll("thousand", "k");
 	}
 
 	private String FormatAmount(String amount) {
 
 		amount = amount.toLowerCase().trim();
 
-		// replace thansand string, because it contains "and"
-		amount = ReplaceThoutsandString(amount);
-		
+		// replace thousand string, because it contains "and"
+		amount = ReplaceThousandString(amount);
+
 		// connect string
 		amount = ReplaceConnectString(amount);
 
@@ -176,27 +188,17 @@ public class CheckParser {
 
 		try {
 
-			if (amount != null) {
-				// foramt pattern
+			if (amount != null && !"".equals(amount.trim())) {
+				// format pattern
 				amount = FormatAmount(amount);
 
 				if (IsMatch(MatchAnd, amount)) {
 					return parseAndAmount(amount);
-				} else if (IsMatch(
-						"([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,/,\\s]+)cent[s]?(\\s*)",
-						amount)
-						|| IsMatch(
-								"([a-z,0-9,\\s,-]+)(dollar[s]?)([a-z,0-9,\\s]+)/(\\s)*100(\\s*)",
-								amount)) {
-					return parseWithoutAmount(amount);
 				} else if (IsMatch("([a-z,0-9,\\s]+)cent[s]?(\\s*)", amount)
 						|| IsMatch(MatchCents, amount)) {
 					return parseCentsPart(amount);
-				} else if (IsMatch("([a-z,0-9,\\s]+)(dollars[s]?)?(\\s*)",
-						amount)) {
-					return parseDollarsPart(amount);
 				} else {
-					return parseAmountTwoDigits(amount);
+					return parseAmountInwords(amount);
 				}
 			}
 
@@ -213,47 +215,50 @@ public class CheckParser {
 			Pattern p = getPattern(MatchAnd);
 			String[] array = p.split(amount);
 
-			if (array != null) {
-				if (array.length == 1) {
-					return parseDollarsPart(array[0]);
-				}
-				if (array.length == 2) {
-					Integer p1 = parseDollarsPart(array[0]);
+			if (array != null && array.length > 0) {
+				
+				Integer p1 = ("".equals(array[0].trim())) ? 0
+						: parseDollarsPart(array[0]);
+				
+				boolean lastPosition = array[0].contains("dollar") || p1< 10000;
+				
+				for(int i=1; i<array.length; ++i){
+					
 					Integer p2 = null;
-					if (IsMatch("([a-z,0-9,\\s]+)dollars[s]?", array[1])) {
-						p2 = parseDollarsPart(array[1]);
-					} else {
-						p2 = parseCentsPart(array[1]);
-						if (p1 != null && p2 == null) {
-							return getInvalidAmount();
+					
+					String s = array[i].trim();
+					
+					if (i == array.length - 1) {
+						if (s.contains("dollar"))
+						{
+							p2 = parseDollarsPart(s);
 						}
+						else if (lastPosition
+								|| IsMatch("([a-z,0-9,\\s]+)cent[s]?(\\s*)", s)
+								|| IsMatch(MatchCents, s)) {
+							p2 = parseCentsPart(s);
+						} else {
+							p2 = parseDollarsPart(s);
+							lastPosition = s.contains("dollar") || (p2 !=null && p2< 10000);
+						}
+					} else {
+						p2 = parseDollarsPart(s);
 					}
-					return Summary(p1, p2);
-				} else if (array.length == 3) {
-					Integer p1 = parseDollarsPart(array[0]);
-					Integer p2 = parseDollarsPart(array[1]);
-					// cents
-					Integer p3 = parseCentsPart(array[2]);
-					if (p1 != null && p2 != null && p3 != null) {
-						return Summary(Summary(p1, p2), p3);
+					
+					
+					if (p1 == null || p2 == null) {
+						return getInvalidAmount();
 					}
+					
+					p1 = Summary(p1, p2);
 				}
+				
+				return p1;
 			}
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
 		}
 
-		return getInvalidAmount();
-	}
-
-	private Integer parseWithoutAmount(String amount) {
-		Pattern p = getPattern("dollars[s]?");
-		String[] array = p.split(amount);
-		if (array != null && array.length == 2) {
-			Integer p1 = parseDollarsPart(array[0]);
-			Integer p2 = parseCentsPart(array[1]);
-			return Summary(p1, p2);
-		}
 		return getInvalidAmount();
 	}
 
@@ -272,6 +277,25 @@ public class CheckParser {
 		return string;
 	}
 
+	private String RemoveDollars(String amount) {
+		if (amount != null) {
+
+			amount = amount.replaceAll(Dollars, "");
+
+			if (!amount.startsWith("-")) {
+				amount = amount.replaceAll("-", " ");
+			}
+		}
+		return amount;
+	}
+
+	private Boolean IsNumberic(String amount) {
+		if (amount != null) {
+			return IsMatch("[\\d,\\s]+(\\s)*", amount);
+		}
+		return false;
+	}
+
 	private Integer tryParseNumber(String string) {
 
 		String s = RemoveSpace(string);
@@ -285,20 +309,6 @@ public class CheckParser {
 		}
 
 		return result;
-	}
-
-	private String RemoveDollars(String amount) {
-		if (amount != null) {
-			return amount.replaceAll(Dollars, "").replaceAll("-", " ");
-		}
-		return amount;
-	}
-
-	private Boolean IsNumberic(String amount) {
-		if (amount != null) {
-			return IsMatch("[\\d,\\s]+(\\s)*", amount);
-		}
-		return false;
 	}
 
 	private Integer parseDollarsPart(String amount) {
@@ -318,20 +328,149 @@ public class CheckParser {
 				return result * 100;
 			}
 		} else {
-			
-			return parseAmountTwoDigits(amount);
+
+			return parseAmountInwords(amount);
 		}
 
 		return getInvalidAmount();
 	}
 
-	//todo: parse hunderd
-	//todo: parse thoursand
-	//todo: parse million
-	
+	// todo: parse hunderd
+	// todo: parse thoursand
+	// todo: parse million
+
+	private Integer tryParseNumberWithWord(String amount, Integer multiple) {
+
+		Integer n = getInvalidAmount();
+
+		if (amount != null) {
+			amount = amount.trim();
+
+			if (IsNumberic(amount)) {
+				n = tryParseNumber(amount);
+				if (n != null) {
+					n *= 100;
+				}
+			} else {
+				n = parseAmountTwoDigits(amount);
+			}
+
+			if (n != null) {
+				n *= multiple;
+			}
+		}
+
+		return n;
+	}
+
+	private Integer parseAmountInwords(String amount) {
+		amount = RemoveDollars(amount);
+
+		if ("".equals(amount.trim())) {
+			return getInvalidAmount();
+		}
+
+		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+		map.put("million", getInvalidAmount()); // million
+		map.put("k", getInvalidAmount()); // thousand
+		map.put("hundred", getInvalidAmount());
+		map.put("dollars", getInvalidAmount());
+		map.put("cents", getInvalidAmount());
+
+		Integer lastValue = null;
+		
+		Pattern p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?million(s)?");
+		Matcher m = p.matcher(amount);
+		if (m.find()) {
+			lastValue = tryParseNumberWithWord(m.group(1), 1000000);
+			map.put("million", lastValue);
+			amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?million(s)?",
+					"");
+		}
+
+		if ("".equals(amount.trim())) {
+			map.put("k", 0);
+		} else {
+			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?k");
+			m = p.matcher(amount);
+			if (m.find()) {
+				lastValue = tryParseNumberWithWord(m.group(1), 1000);
+				map.put("k", lastValue);
+				amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?k", "");
+			} else if (lastValue != null) {
+				map.put("k", 0);
+			}
+		}
+
+		if ("".equals(amount.trim())) {
+			map.put("hundred", 0);
+		} else {
+			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?hundred");
+			m = p.matcher(amount);
+			if (m.find()) {
+				lastValue = tryParseNumberWithWord(m.group(1), 100);
+				map.put("hundred", lastValue);
+				amount = amount.replaceAll(
+						"([a-z,0-9,\\-,\\s]+)\\s?hundred(s)?", "");
+			}
+			else if (lastValue !=null){
+				map.put("hundred", 0);
+			}
+		}
+
+		if ("".equals(amount.trim())) {
+			map.put("dollars", 0);
+		} else {
+			if (IsMatch("([a-z,0-9,\\-,\\s]+)dollar", amount)
+					|| IsMatch("([a-z,0-9,\\-,\\s]+)(and)", amount)
+					|| (!amount.contains("cent") && !amount.contains("/"))) {
+				Integer n = parseAmountTwoDigits(amount);
+				map.put("dollars", n);
+
+				amount = amount
+						.replaceAll("([a-z,0-9,\\-,\\s]+)dollar(s)?", "")
+						.replaceAll("([a-z,0-9,\\-,\\s]+)(and)", "");
+				if (!amount.contains("cent") && !IsMatch("/(\\s)*100", amount)) {
+					if (n != null) {
+						amount = "";
+					}
+				}
+			}
+
+		}
+
+		if ("".equals(amount.trim())) {
+			map.put("cents", 0);
+		} else if (amount.contains("cent") || IsMatch(MatchCents, amount)) {
+			map.put("cents", parseCentsPart(amount));
+		}
+
+		Integer total = getInvalidAmount();
+		for (Map.Entry<String, Integer> pair : map.entrySet()) {
+			Integer n = pair.getValue();
+			if (n != null && total == null) {
+				total = 0;
+			}
+
+			if (n != null && total != null) {
+				total += n;
+			}
+
+			if (n == null && total != null) {
+				return getInvalidAmount();
+			}
+		}
+
+		return total;
+
+	}
+
+	// obsolete
 	private Integer parseAmountTwoDigits(String amount) {
 
 		amount = RemoveDollars(amount);
+
+		amount = RemoveMiddleSpaceInNumber(amount);
 
 		Pattern p = getPattern("\\s+");
 		String[] array = p.split(amount);
@@ -378,7 +517,13 @@ public class CheckParser {
 
 	private Integer parseCentsPart(String amount) {
 
+		//if (amount.contains("cent") && IsFound("/(\\s)*100", amount)) {
+		//	return getInvalidAmount();
+		//}
+
 		amount = amount.replaceAll(Cents, "");
+
+		amount = RemoveMiddleSpaceInNumber(amount);
 
 		//
 		// support these types: 75, 12/100, ten, eighty five /100, nine / one
@@ -395,7 +540,7 @@ public class CheckParser {
 				return tryParseNumber(array[0]);
 			} else {
 
-				Integer cents = parseNumber(RemoveDollars(array[0]));
+				Integer cents = parseNumberInWords(RemoveDollars(array[0]));
 
 				if (cents != null) {
 					if (cents < 0) {
@@ -413,38 +558,75 @@ public class CheckParser {
 
 	}
 
-	private Integer parseNumber(String amount) {
+	private String RemoveMiddleSpaceInNumber(String amount) {
+		if (IsMatch("^[0-9,\\s,/]+$", amount)) {
+			amount = amount.replaceAll(" ", "");
+		}
+		return amount;
+	}
 
-		Pattern p = getPattern("\\s+");
+	private Integer parseNumberInWords(String amount) {
 
-		String[] array = p.split(amount);
+		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+		map.put("million", getInvalidAmount()); // million
+		map.put("k", getInvalidAmount()); // thousand
+		map.put("hundred", getInvalidAmount());
+		map.put("dollars", getInvalidAmount());
 
-		if (array != null) {
-
-			Integer total = null;
-
-			for (String s : array) {
-
-				Integer n = parseAmount(s);
-
-				if (n == null && total != null) {
-					return getInvalidAmount();
-				} else {
-					if (n != null && total == null) {
-						total = 0;
-					}
-
-					if (n != null && total != null) {
-						total += n;
-					}
-				}
-			}
-
-			return total;
-
+		Pattern p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?million(s)?");
+		Matcher m = p.matcher(amount);
+		if (m.find()) {
+			map.put("million", tryParseNumberWithWord(m.group(1), 1000000));
+			amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?million(s)?",
+					"");
 		}
 
-		return getInvalidAmount();
+		if ("".equals(amount.trim())) {
+			map.put("k", 0);
+		} else {
+			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?k");
+			m = p.matcher(amount);
+			if (m.find()) {
+				map.put("k", tryParseNumberWithWord(m.group(1), 1000));
+				amount = amount.replaceAll("([a-z,0-9,\\-,\\s]+)\\s?k", "");
+			}
+		}
+
+		if ("".equals(amount.trim())) {
+			map.put("hundred", 0);
+		} else {
+			p = getPattern("([a-z,0-9,\\-,\\s]+)\\s?hundred");
+			m = p.matcher(amount);
+			if (m.find()) {
+				map.put("hundred", tryParseNumberWithWord(m.group(1), 100));
+				amount = amount.replaceAll(
+						"([a-z,0-9,\\-,\\s]+)\\s?hundred(s)?", "");
+			}
+		}
+
+		if ("".equals(amount.trim())) {
+			map.put("dollars", 0);
+		} else {
+			map.put("dollars", parseAmountTwoDigits(amount));
+		}
+
+		Integer total = getInvalidAmount();
+		for (Map.Entry<String, Integer> pair : map.entrySet()) {
+			Integer n = pair.getValue();
+			if (n != null && total == null) {
+				total = 0;
+			}
+
+			if (n != null && total != null) {
+				total += n;
+			}
+
+			if (n == null && total != null) {
+				return getInvalidAmount();
+			}
+		}
+
+		return total;
 	}
 
 	private Integer Summary(Integer p1, Integer p2) {
@@ -472,6 +654,16 @@ public class CheckParser {
 			Pattern p = getPattern(regex);
 			Matcher m = p.matcher(amount);
 			return m.matches();
+		}
+	}
+
+	private boolean IsFound(String regex, String amount) {
+		if (amount != null && amount.contains(regex)) {
+			return true;
+		} else {
+			Pattern p = getPattern(regex);
+			Matcher m = p.matcher(amount);
+			return m.find();
 		}
 	}
 }
