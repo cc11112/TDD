@@ -53,7 +53,13 @@ public class CheckParser {
 		AMOUNTS.put("eighty", 8000);
 		AMOUNTS.put("ninety", 9000);
 		AMOUNTS.put("ninty", 9000); // support typo
-		// AMOUNTS.put("one hundred", 10000);
+		AMOUNTS.put("hundred", 10000);
+		AMOUNTS.put("hundreds", 10000);
+		AMOUNTS.put("thousand", 100000);
+		AMOUNTS.put("thousands", 100000);
+		AMOUNTS.put("k", 100000);
+		AMOUNTS.put("million", 100000000);
+		AMOUNTS.put("millions", 100000000);
 	}
 
 	private String ReplaceDollarSymbol(String amount) {
@@ -67,10 +73,9 @@ public class CheckParser {
 			if (!amount.contains("and")) {
 				amount += " dollars";
 			}
-		} else if (amount.endsWith("$")){
+		} else if (amount.endsWith("$")) {
 			amount = amount.replaceAll("\\$", "");
-		}
-		else if (amount.contains("$")) {
+		} else if (amount.contains("$")) {
 			amount = amount.replaceAll("\\$", " dollars ");
 		}
 
@@ -99,9 +104,9 @@ public class CheckParser {
 	}
 
 	private String ReplaceCommaSymbol(String amount) {
-		if (IsMatch("([\\d]+)[,]+([\\d])+([a-z,\\s]+)", amount)) {
+		if (IsMatch("([\\d]+)[,]+([\\d])+([a-z,\\s]+)?", amount)) {
 			amount = amount.replaceAll(",", "");
-		} else{
+		} else {
 			amount = amount.replaceAll(",", " and ");
 		}
 
@@ -109,45 +114,52 @@ public class CheckParser {
 	}
 
 	private String ReplaceConnectString(String amount) {
-		
-		//remove '*' 
+
+		// remove '*'
 		amount = amount.replace('*', ' ').trim();
-		
-		//allow treat '\' as '/'
+
+		// allow treat '\' as '/'
 		amount = amount.replace('\\', '/');
 
 		// treat tilde ~ as a 'and'
 		amount = amount.replace('~', '+');
 
-		// treat  & as a 'and'
+		// treat & as a 'and'
 		amount = amount.replace('&', '+');
-		
+
 		// treat ';' as 'and'
 		amount = amount.replace(';', '+');
-		
+
 		// treate ':" as and
 		amount = amount.replace(':', '+');
-		
+
 		// treate '|" as and
 		amount = amount.replace('|', '+');
-		
-		//this line will be the last
+
+		// this line will be the last
 		// treat '+' & as a 'and'
 		amount = amount.replaceAll("\\+", " and ");
-		
+
 		// treat multi '-' as "and"
 		amount = amount.replaceAll("([\\-]{2,})", " and ");
-		
+
 		return amount.trim();
+	}
+
+	private String ReplaceThoutsandString(String amount) {
+		return amount.replaceAll("thousands", " k ").replaceAll("thousand", "k");
 	}
 
 	private String FormatAmount(String amount) {
 
 		amount = amount.toLowerCase().trim();
+
+		// replace thansand string, because it contains "and"
+		amount = ReplaceThoutsandString(amount);
 		
 		// connect string
 		amount = ReplaceConnectString(amount);
-		
+
 		// . and
 		amount = ReplaceDotSymbol(amount);
 
@@ -156,7 +168,7 @@ public class CheckParser {
 
 		// $
 		amount = ReplaceDollarSymbol(amount);
-		
+
 		return amount.trim();
 	}
 
@@ -306,12 +318,17 @@ public class CheckParser {
 				return result * 100;
 			}
 		} else {
+			
 			return parseAmountTwoDigits(amount);
 		}
 
 		return getInvalidAmount();
 	}
 
+	//todo: parse hunderd
+	//todo: parse thoursand
+	//todo: parse million
+	
 	private Integer parseAmountTwoDigits(String amount) {
 
 		amount = RemoveDollars(amount);

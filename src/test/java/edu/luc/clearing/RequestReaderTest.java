@@ -77,5 +77,12 @@ public class RequestReaderTest {
 				reader.respond(new StringReader("[\"one\",\"two\",\"three\"]")));
 
 	}
+	
+	@Test
+	public void shouldHandlePost() throws Exception{
+		assertEquals("{\"count\":0}", reader.handle(new StringReader("[]")));
+		assertEquals("{\"count\":1}", reader.handle(new StringReader("{\"one\":100}")));
+		assertEquals("{\"count\":2}", reader.handle(new StringReader("{\"one\":100,\"two\":200}")));
+	}
 
 }

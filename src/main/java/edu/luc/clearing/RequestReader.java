@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
@@ -110,7 +111,37 @@ public class RequestReader {
 	}
 
 	private Type requestType() {
-		return new TypeToken<List<String>>() {
-		}.getType();
+		return new TypeToken<List<String>>() {}.getType();
 	}
+
+	private Type postType(){
+		return new TypeToken<Map<String,Integer>>(){}.getType();
+	}
+	
+	public String handle(Reader requestData) {
+		
+		Map<String, Integer> checks = null;
+
+		try {
+			
+			Gson gson = new Gson();
+			
+			checks = gson.fromJson(requestData, postType());
+			
+		} catch (Exception ex) {
+			System.err.println(ex.getMessage());
+		}
+
+		Integer count = 0;
+		if (checks != null) {
+			for (Map.Entry<String, Integer> pairs : checks.entrySet()) {
+				dataStore.saveRow("RejectChecks", pairs.getKey() + " = "
+						+ pairs.getValue().toString());
+				++count;
+			}
+		}
+
+		return "{\"count\":"+ count.toString() +"}";
+	}
+
 }

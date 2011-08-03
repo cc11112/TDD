@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.FetchOptions;
 
 public class DatastoreAdapter {
 	private DatastoreService datastore;
@@ -26,14 +27,18 @@ public class DatastoreAdapter {
 
 		ArrayList<Map<String, Object>> properties = new ArrayList<Map<String, Object>>();
 
+		if (limit < 0){
+			limit = Integer.MAX_VALUE;
+		}
+		
 		try
 		{
 			Query query = new Query(column);
+
 			PreparedQuery preQuery = datastore.prepare(query);
-			for (Entity e : preQuery.asIterable()) {
-				if (properties.size() < limit){
-					properties.add(e.getProperties());
-				}
+
+			for (Entity e : preQuery.asList(FetchOptions.Builder.withLimit(limit))) {
+				properties.add(e.getProperties());
 			}
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
