@@ -126,7 +126,7 @@ public class RequestReader {
 			
 			Gson gson = new Gson();
 			
-			checks = gson.fromJson(requestData, postType());
+			checks = gson.fromJson(GetPostData(requestData), postType());
 			
 		} catch (Exception ex) {
 			System.err.println(ex.getMessage());
