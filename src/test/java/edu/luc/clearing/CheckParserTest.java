@@ -30,6 +30,9 @@ public class CheckParserTest {
 		assertEquals(100000, parser.parseExpression("1000").intValue());
 		assertEquals(1000000, parser.parseExpression("10000").intValue());
 		assertEquals(1000000, parser.parseExpression("10,000").intValue());
+		assertEquals(100000, parser.parseExpression("$1,000").intValue());
+		assertEquals(900000, parser.parseExpression("$ 9,000").intValue());
+		assertEquals(899900, parser.parseExpression(" 8,999$ ").intValue());
 		assertEquals(2000000, parser.parseExpression("20 000").intValue());
 		assertEquals(8031900, parser.parseExpression("80 319 dollar").intValue());
 		assertEquals(8700, parser.parseExpression("8 7 dollars").intValue());
@@ -65,6 +68,38 @@ public class CheckParserTest {
 		assertEquals(991312, parser.parseExpression("ninety nine hundreds thirteen and 12/100").intValue());
 		assertEquals(991399, parser.parseExpression("ninety nine hundreds thirteen dollar 99/100").intValue());
 		assertEquals(9913, parser.parseExpression("ninety nine hundreds thirteen cents").intValue());
+		assertEquals(990013, parser.parseExpression("ninety nine hundreds dollars thirteen cents").intValue());
+		assertEquals(990113, parser.parseExpression("ninety nine hundreds and one dollar and thirteen cents").intValue());
+		assertEquals(9999, parser.parseExpression("ninety nine anD 99/100").intValue());
+		assertEquals(99999, parser.parseExpression("nine hundreds and ninety nine AND 99/100").intValue());
+		assertEquals(999999, parser.parseExpression("ninety nine hundreds and ninety nine AND 99/100").intValue());
+		assertEquals(999999, parser.parseExpression("ninety nine hundreds and ninety nine DOLLARS AND 99/100").intValue());
+		assertEquals(91000, parser.parseExpression("910 ,  0/100").intValue());
+		assertEquals(91076, parser.parseExpression("910 , 76 cents").intValue());
+		assertEquals(91076, parser.parseExpression("910 , 76/100 cents").intValue());
+		assertEquals(91076, parser.parseExpression("910 , 76 ").intValue());
+		assertEquals(91076, parser.parseExpression("910 dollars, 76 ").intValue());
+		assertEquals(90076, parser.parseExpression("nine hundreds , 76 ").intValue());
+		assertEquals(90076, parser.parseExpression("nine hundreds and  76 cents ").intValue());
+		assertEquals(91076, parser.parseExpression("nine hundreds and  ten dollars 76/100 ").intValue());
+		assertEquals(91000, parser.parseExpression("nine hundreds and  ten dollars no cents ").intValue());
+		assertEquals(91000, parser.parseExpression("nine hundreds and  ten dollars and no cents ").intValue());
+		assertEquals(91076, parser.parseExpression("nine hundreds and ten dollars  -- 76 cents ").intValue());
+		assertEquals(91076, parser.parseExpression("nine hundreds and ten dollars  and 76 cents ").intValue());
+		assertEquals(91076, parser.parseExpression("nine hundreds and ten dollars  , 76 cents ").intValue());
+		assertEquals(64342, parser.parseExpression("643 + 42 cents ").intValue());
+		assertEquals(999999, parser.parseExpression("$9,999 AND 99/100").intValue());
+		assertEquals(86835, parser.parseExpression("868 & 35 Cents").intValue());
+		assertEquals(33854, parser.parseExpression("338 Dollars + 54 Cent").intValue());
+		assertEquals(34805, parser.parseExpression("348 And 5 Cent").intValue());
+		assertEquals(36297, parser.parseExpression("362 Dollar + 97/100").intValue());
+		assertEquals(72348, parser.parseExpression("$723 + forty eight cent").intValue());
+		assertEquals(47947, parser.parseExpression("$479 ~ 47 Cents").intValue());
+		assertEquals(46909, parser.parseExpression("$469 , 9 Cent").intValue());
+		assertEquals(36297, parser.parseExpression("362 Dollar + 97/100").intValue());
+		assertEquals(97306, parser.parseExpression("973 ~ 6/100").intValue());
+		assertEquals(91744, parser.parseExpression("nine hundred seventeen , 44/100").intValue());
+
 	}
 	
 	@Test
@@ -209,7 +244,7 @@ public class CheckParserTest {
 		assertEquals(3700, parser.parseExpression(" thirty DOLLARS and seven DOLLARS").intValue());
 		assertEquals(6900, parser.parseExpression(" sixty DOLLARS and 9 DOLLARS").intValue());
 		assertEquals(8000, parser.parseExpression(" seventy-one DOLLARS and 9 DOLLARS").intValue());
-		assertEquals(4700, parser.parseExpression(" forty  and DOLLARS seven").intValue());
+		assertEquals(4007, parser.parseExpression(" forty  and DOLLARS seven").intValue());
 		assertEquals(8200, parser.parseExpression(" eighty - two").intValue());
 		assertEquals(8300, parser.parseExpression(" eighty- three").intValue());
 		//assertEquals(8005, parser.parseExpression(" eighty-DOLLARS-five cent").intValue()); 
@@ -350,17 +385,6 @@ public class CheckParserTest {
 	}
 	
 	@Test
-	public void shouldReturNullMultiAnd() throws Exception{
-		//assertEquals(null, parser.parseExpression("thirty centsand99and/100"));
-		//assertEquals(null, parser.parseExpression("thirty and99and/100and"));
-		//assertEquals(null, parser.parseExpression("41 and 1 and + 99/100+"));
-		//assertEquals(null, parser.parseExpression("$79 & 1 and + 99/100+"));
-		//assertEquals(null, parser.parseExpression("$31 & 5 and & 99/100+"));
-		//assertEquals(null, parser.parseExpression("thirty and + 99/100"));
-		//assertEquals(null, parser.parseExpression("7;:89 dollars"));
-	}
-	
-	@Test
 	public void shouldTreatPlusAsAnd() throws Exception{
 		assertEquals(7917, parser.parseExpression(" SEVENTY-nine DOLLARS + 17/100").intValue());
 		assertEquals(0, parser.parseExpression("zero + 0/100").intValue());
@@ -446,6 +470,8 @@ public class CheckParserTest {
 		assertEquals(123400, parser.parseExpression("1,234.00 dollar").intValue());
 		assertEquals(57839801, parser.parseExpression("0,578,398.01 dollar").intValue());
 		assertEquals(407839899, parser.parseExpression("4,078,398.99").intValue());
+		assertEquals(407839899, parser.parseExpression("$4,078,398.99").intValue());
+		assertEquals(407839899, parser.parseExpression("4,078,398.99 dollar").intValue());
 	}
 	
 	@Test

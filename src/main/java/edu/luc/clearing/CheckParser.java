@@ -113,13 +113,25 @@ public class CheckParser {
 	}
 
 	private String ReplaceCommaSymbol(String amount) {
-		if (IsMatch("([\\d,\\,]+)[,]+([\\d])+([a-z,.,/,\\s]+)?", amount)
-				|| IsMatch(MatchAnd, amount)
-				|| IsMatch("([0-9,\\,]+/(\\s)*100)", amount)) {
-			amount = amount.replaceAll(",", "");
-		} else {
-			amount = amount.replaceAll(",", " and ");
+		Pattern p = getPattern("([\\d,\\,]+[,]+[\\d]+)");
+		Matcher m = p.matcher(amount);
+		if (m.find()){
+			String s = m.group(1);
+			String s1 = s.replaceAll(",", "") ;;
+			amount = amount.replaceAll(s, s1);
 		}
+		
+		if (amount.contains(",")){
+			amount = amount.replaceAll(",", " and ") + " cents";
+		}
+		
+		/*
+		if (IsMatch("([\\$,\\d,\\,]+)[,]+([\\d,.])+([a-z,0-9,.,/,\\s]+)?", amount)
+				|| IsMatch("([0-9,\\,]+/(\\s)*100)", amount)) {
+			amount = amount.replaceAll(",", "") ;
+		} else {
+			amount = amount.replaceAll(",", " and ") + " cents";
+		}*/
 
 		return amount;
 	}
@@ -171,15 +183,18 @@ public class CheckParser {
 
 		// connect string
 		amount = ReplaceConnectString(amount);
-
-		// . and
-		amount = ReplaceDotSymbol(amount);
-
+		
 		// ,
-		amount = ReplaceCommaSymbol(amount);
-
+		if (amount.contains(",")) {
+			amount = ReplaceCommaSymbol(amount);
+		}
+		
 		// $
-		amount = ReplaceDollarSymbol(amount);
+		amount = ReplaceDollarSymbol(amount);		
+		// . and
+		if (amount.contains(".")){
+			amount = ReplaceDotSymbol(amount);
+		}
 
 		amount = FilterOutUnnecessaryAnd(amount);
 		
@@ -252,7 +267,17 @@ public class CheckParser {
 					if (i == array.length - 1) {
 						if (s.contains("dollar"))
 						{
-							p2 = parseDollarsPart(s);
+							 p = getPattern("dollar");
+							 String[] ar = p.split(s);
+							 if (ar.length == 1)
+							 {
+								 p2 = parseDollarsPart(ar[0]);
+							 }
+							 else if (ar.length > 1){
+								 p2 = parseDollarsPart(ar[0]);
+								 Long p3 = parseCentsPart(ar[1]);
+								 p2 = Summary(p2, p3);
+							 }
 						}
 						else if (lastPosition
 								|| IsMatch("([a-z,0-9,\\s]+)cent[s]?(\\s*)", s)
@@ -542,6 +567,10 @@ public class CheckParser {
 
 		amount = RemoveMiddleSpaceInNumber(amount);
 
+		if ("".equals(amount)){
+			return getInvalidAmount();
+		}
+		
 		Pattern p = getPattern("/");
 
 		String[] array = p.split(amount);
