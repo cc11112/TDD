@@ -66,9 +66,4 @@ public class DatastoreAdapterTest {
 		verify(googleStore).put((Entity) anyObject());
 	}
 	
-	@Test
-	public void canQuerySomething() throws Exception {
-		//TODO:
-		
-	}
 }

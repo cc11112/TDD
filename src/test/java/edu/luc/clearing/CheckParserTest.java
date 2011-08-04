@@ -70,7 +70,7 @@ public class CheckParserTest {
 		assertEquals(9913, parser.parseExpression("ninety nine hundreds thirteen cents").intValue());
 		assertEquals(990013, parser.parseExpression("ninety nine hundreds dollars thirteen cents").intValue());
 		assertEquals(990113, parser.parseExpression("ninety nine hundreds and one dollar and thirteen cents").intValue());
-		assertEquals(9999, parser.parseExpression("ninety nine anD 99/100").intValue());
+		assertEquals(9999, parser.parseExpression("ninty nine and 99/100").intValue());
 		assertEquals(99999, parser.parseExpression("nine hundreds and ninety nine AND 99/100").intValue());
 		assertEquals(999999, parser.parseExpression("ninety nine hundreds and ninety nine AND 99/100").intValue());
 		assertEquals(999999, parser.parseExpression("ninety nine hundreds and ninety nine DOLLARS AND 99/100").intValue());
@@ -89,7 +89,7 @@ public class CheckParserTest {
 		assertEquals(91076, parser.parseExpression("nine hundreds and ten dollars  , 76 cents ").intValue());
 		assertEquals(64342, parser.parseExpression("643 + 42 cents ").intValue());
 		assertEquals(999999, parser.parseExpression("$9,999 AND 99/100").intValue());
-		assertEquals(86835, parser.parseExpression("868 & 35 Cents").intValue());
+		assertEquals(86835, parser.parseExpression("868 l& 35 Cents").intValue());
 		assertEquals(33854, parser.parseExpression("338 Dollars + 54 Cent").intValue());
 		assertEquals(34805, parser.parseExpression("348 And 5 Cent").intValue());
 		assertEquals(36297, parser.parseExpression("362 Dollar + 97/100").intValue());
@@ -462,7 +462,7 @@ public class CheckParserTest {
 	public void shouldTreatDotAsAnd() throws Exception{
 		assertEquals(345, parser.parseExpression("3.45").intValue());
 		assertEquals(789, parser.parseExpression("7.89 dollars").intValue());
-		assertEquals(1, parser.parseExpression(" .01 dollar ").intValue());
+		assertEquals(1, parser.parseExpression(" 0.01 dollar ").intValue());
 		assertEquals(100, parser.parseExpression("1.00 dollar").intValue());
 		assertEquals(310, parser.parseExpression("3.10 dollar").intValue());
 		assertEquals(920, parser.parseExpression("9.20 dollar").intValue());

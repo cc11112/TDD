@@ -124,14 +124,6 @@ public class CheckParser {
 		if (amount.contains(",")){
 			amount = amount.replaceAll(",", " and ") + " cents";
 		}
-		
-		/*
-		if (IsMatch("([\\$,\\d,\\,]+)[,]+([\\d,.])+([a-z,0-9,.,/,\\s]+)?", amount)
-				|| IsMatch("([0-9,\\,]+/(\\s)*100)", amount)) {
-			amount = amount.replaceAll(",", "") ;
-		} else {
-			amount = amount.replaceAll(",", " and ") + " cents";
-		}*/
 
 		return amount;
 	}
@@ -202,7 +194,7 @@ public class CheckParser {
 	}
 
 	private String FilterOutUnnecessaryAnd(String amount) {
-		//TODO: Filter out unnecessary and
+		//
 		//filter out "and" before million
 		//filter out "and" before thousand
 		Pattern p = getPattern("million");
@@ -381,7 +373,7 @@ public class CheckParser {
 		return getInvalidAmount();
 	}
 
-	// TODO: parse million
+	// parse million
 	private Long tryParseNumberWithWord(String amount, Long multiple) {
 
 		Long n = getInvalidAmount();
@@ -559,10 +551,6 @@ public class CheckParser {
 
 	private Long parseCentsPart(String amount) {
 
-		//if (amount.contains("cent") && IsFound("/(\\s)*100", amount)) {
-		//	return getInvalidAmount();
-		//}
-
 		amount = amount.replaceAll(Cents, "");
 
 		amount = RemoveMiddleSpaceInNumber(amount);
@@ -711,15 +699,5 @@ public class CheckParser {
 		
         return buffer.toString();
     }
-/*
-	private boolean IsFound(String regex, String amount) {
-		if (amount != null && amount.contains(regex)) {
-			return true;
-		} else {
-			Pattern p = getPattern(regex);
-			Matcher m = p.matcher(amount);
-			return m.find();
-		}
-	}
-*/	
+	
 }
