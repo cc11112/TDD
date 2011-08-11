@@ -92,6 +92,12 @@ public class CheckParser {
 		return amount;
 	}
 
+	private String ReplaceCentsSymbol(String amount) {
+		
+		amount = amount.replaceAll("cnts", "cent").replaceAll("cnt","cent").replaceAll("¢", "cent");
+		return amount;
+	}
+
 	private String ReplaceDotSymbol(String amount) {
 
 		if (amount.startsWith(".")) {
@@ -180,6 +186,9 @@ public class CheckParser {
 		if (amount.contains(",")) {
 			amount = ReplaceCommaSymbol(amount);
 		}
+
+		// cents
+		amount = ReplaceCentsSymbol(amount);
 		
 		// $
 		amount = ReplaceDollarSymbol(amount);		
